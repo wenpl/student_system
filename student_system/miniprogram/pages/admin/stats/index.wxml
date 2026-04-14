@@ -1,0 +1,93 @@
+<!--pages/admin/stats/index.wxml-->
+<view class="stats-container">
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'overview' ? 'active' : ''}}" bindtap="switchTab" data-tab="overview">数据概览</view>
+    <view class="tab-item {{currentTab === 'booking' ? 'active' : ''}}" bindtap="switchTab" data-tab="booking">约课统计</view>
+  </view>
+
+  <!-- 数据概览 -->
+  <view wx:if="{{currentTab === 'overview'}}" class="overview-section">
+    <view class="stats-grid">
+      <view class="stats-card">
+        <view class="stats-icon student"></view>
+        <view class="stats-info">
+          <text class="stats-value">{{stats.studentCount}}</text>
+          <text class="stats-label">学员总数</text>
+        </view>
+      </view>
+      <view class="stats-card">
+        <view class="stats-icon class"></view>
+        <view class="stats-info">
+          <text class="stats-value">{{stats.classCount}}</text>
+          <text class="stats-label">班级总数</text>
+        </view>
+      </view>
+      <view class="stats-card">
+        <view class="stats-icon teacher"></view>
+        <view class="stats-info">
+          <text class="stats-value">{{stats.teacherCount}}</text>
+          <text class="stats-label">老师总数</text>
+        </view>
+      </view>
+      <view class="stats-card">
+        <view class="stats-icon course"></view>
+        <view class="stats-info">
+          <text class="stats-value">{{stats.courseCount}}</text>
+          <text class="stats-label">课程总数</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快速统计 -->
+    <view class="section">
+      <view class="section-title">本月概况</view>
+      <view class="quick-stats">
+        <view class="quick-item">
+          <text class="quick-value">{{bookingData.monthCount}}</text>
+          <text class="quick-label">本月约课数</text>
+        </view>
+        <view class="quick-item">
+          <text class="quick-value">{{bookingData.todayCount}}</text>
+          <text class="quick-label">今日约课数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 约课统计 -->
+  <view wx:if="{{currentTab === 'booking'}}" class="booking-section">
+    <view class="booking-summary">
+      <view class="summary-card main">
+        <text class="summary-label">本月约课数</text>
+        <text class="summary-value">{{bookingData.monthCount}}</text>
+      </view>
+      <view class="summary-row">
+        <view class="summary-card">
+          <text class="summary-label">今日约课</text>
+          <text class="summary-value small">{{bookingData.todayCount}}次</text>
+        </view>
+        <view class="summary-card">
+          <text class="summary-label">待上课</text>
+          <text class="summary-value small">{{bookingData.pendingCount}}次</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 月度趋势 -->
+    <view class="section">
+      <view class="section-title">月度约课趋势</view>
+      <view class="chart-container">
+        <view class="bar-chart">
+          <view wx:for="{{bookingData.monthList}}" wx:key="month" class="bar-item">
+            <view class="bar-wrapper">
+              <view class="bar new" style="height: {{item.count / bookingData.maxCount * 100}}rpx;"></view>
+            </view>
+            <text class="bar-label">{{item.month}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

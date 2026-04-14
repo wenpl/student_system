@@ -1,0 +1,359 @@
+/* pages/admin/index.wxss - 现代简约管理员首页 */
+
+.admin-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding-bottom: 120rpx;
+}
+
+/* ==================== 数据概览 ==================== */
+.overview-section {
+  background: linear-gradient(165deg, #4A90D9 0%, #36B5A0 100%);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-section::before {
+  content: '';
+  position: absolute;
+  top: -100rpx;
+  right: -100rpx;
+  width: 300rpx;
+  height: 300rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.overview-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 1rpx;
+}
+
+.overview-date {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.overview-item {
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 16rpx;
+  padding: 24rpx 16rpx;
+  text-align: center;
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.overview-value {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.overview-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ==================== 区块 ==================== */
+.section {
+  margin: 24rpx;
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.section-action {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ==================== 待办事项 ==================== */
+.todo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 16rpx;
+  transition: all 0.25s ease;
+}
+
+.todo-item:active {
+  transform: scale(0.98);
+}
+
+.todo-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+  font-size: 24rpx;
+}
+
+.todo-icon image {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.todo-icon.audit {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 217, 0.3);
+}
+
+.todo-icon.booking {
+  background: linear-gradient(135deg, #FAAD14 0%, #FFC53D 100%);
+  box-shadow: 0 4rpx 12rpx rgba(250, 173, 20, 0.3);
+}
+
+.todo-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.todo-label {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 快捷入口 ==================== */
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.quick-grid.second-row {
+  margin-top: 24rpx;
+}
+
+.quick-grid.second-row .quick-item:nth-child(1) {
+  grid-column: 1;
+}
+
+.quick-grid.second-row .quick-item:nth-child(2) {
+  grid-column: 2;
+}
+
+.quick-grid.second-row .quick-item:nth-child(3) {
+  grid-column: 3;
+}
+
+.quick-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.quick-item:active {
+  transform: scale(0.95);
+}
+
+.quick-icon {
+  width: 88rpx;
+  height: 88rpx;
+  margin-bottom: 12rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #FFFFFF;
+  transition: all 0.25s ease;
+}
+
+.quick-icon.student {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  box-shadow: 0 6rpx 20rpx rgba(74, 144, 217, 0.35);
+}
+
+.quick-icon.class {
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  box-shadow: 0 6rpx 20rpx rgba(82, 196, 26, 0.35);
+}
+
+.quick-icon.schedule {
+  background: linear-gradient(135deg, #FAAD14 0%, #FFC53D 100%);
+  box-shadow: 0 6rpx 20rpx rgba(250, 173, 20, 0.35);
+}
+
+.quick-icon.teacher {
+  background: linear-gradient(135deg, #EB2F96 0%, #F759AB 100%);
+  box-shadow: 0 6rpx 20rpx rgba(235, 47, 150, 0.35);
+}
+
+.quick-icon.notice {
+  background: linear-gradient(135deg, #722ED1 0%, #9254DE 100%);
+  box-shadow: 0 6rpx 20rpx rgba(114, 46, 209, 0.35);
+}
+
+.quick-icon.booking {
+  background: linear-gradient(135deg, #13C2C2 0%, #36CFC9 100%);
+  box-shadow: 0 6rpx 20rpx rgba(19, 194, 194, 0.35);
+}
+
+.quick-icon.stats {
+  background: linear-gradient(135deg, #4A90D9 0%, #5B8FF9 100%);
+  box-shadow: 0 6rpx 20rpx rgba(74, 144, 217, 0.35);
+}
+
+.quick-name {
+  font-size: 24rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ==================== 约课概况 ==================== */
+.booking-card {
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.08) 0%, rgba(54, 181, 160, 0.04) 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.booking-main {
+  margin-bottom: 20rpx;
+}
+
+.booking-label {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+}
+
+.booking-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.booking-detail {
+  display: flex;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.booking-item {
+  flex: 1;
+  text-align: center;
+}
+
+.booking-item-label {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  margin-bottom: 8rpx;
+}
+
+.booking-item-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.booking-divider {
+  width: 1rpx;
+  height: 48rpx;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 50%, transparent 100%);
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  padding: 32rpx 0;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 底部导航 ==================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background-color: #FFFFFF;
+  display: flex;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 999;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-item.active .nav-text {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 40rpx;
+  margin-bottom: 4rpx;
+}
+
+.nav-text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}

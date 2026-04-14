@@ -1,0 +1,28 @@
+<!--pages/teacher/notice/index.wxml-->
+<view class="notice-container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">通知公告</text>
+    <text wx:if="{{unreadCount > 0}}" class="header-badge">{{unreadCount}}条未读</text>
+  </view>
+
+  <!-- 公告列表 -->
+  <view wx:if="{{notices.length === 0}}" class="empty-state">
+    <view class="empty-icon"></view>
+    <text class="empty-text">暂无公告</text>
+  </view>
+
+  <view wx:else class="notice-list">
+    <view class="notice-item {{item.isRead ? 'read' : ''}}" wx:for="{{notices}}" wx:key="_id" bindtap="goToDetail" data-id="{{item._id}}">
+      <view class="notice-header">
+        <view class="notice-type {{item.type === 'important' ? 'important' : item.type === 'activity' ? 'activity' : ''}}">{{item.typeText}}</view>
+        <text class="notice-time">{{item.timeText}}</text>
+      </view>
+      <view class="notice-title-row">
+        <text class="notice-title">{{item.title}}</text>
+        <view wx:if="{{!item.isRead}}" class="unread-dot"></view>
+      </view>
+      <view class="notice-preview">{{item.content}}</view>
+    </view>
+  </view>
+</view>

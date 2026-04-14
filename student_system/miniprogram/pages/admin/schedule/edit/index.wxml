@@ -1,0 +1,74 @@
+<!--pages/admin/schedule/edit/index.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">上课日期 *</text>
+      <picker mode="date" bindchange="onDateChange" value="{{date}}">
+        <view class="form-picker">
+          <text class="selected">{{date}}</text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">开始时间 *</text>
+      <picker mode="time" bindchange="onStartTimeChange" value="{{startTime}}">
+        <view class="form-picker">
+          <text class="{{startTime ? 'selected' : 'placeholder'}}">
+            {{startTime || '请选择开始时间'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">结束时间 *</text>
+      <picker mode="time" bindchange="onEndTimeChange" value="{{endTime}}">
+        <view class="form-picker">
+          <text class="{{endTime ? 'selected' : 'placeholder'}}">
+            {{endTime || '请选择结束时间'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">课程名称 *</text>
+      <input class="form-input" placeholder="请输入课程名称" bindinput="onCourseNameInput" value="{{courseName}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">所属班级</text>
+      <picker mode="selector" range="{{classList}}" range-key="name" bindchange="onClassChange">
+        <view class="form-picker">
+          <text class="{{className ? 'selected' : 'placeholder'}}">
+            {{className || '请选择班级'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">授课老师</text>
+      <picker mode="selector" range="{{teacherList}}" range-key="nickName" bindchange="onTeacherChange">
+        <view class="form-picker">
+          <text class="{{teacherName ? 'selected' : 'placeholder'}}">
+            {{teacherName || '请选择老师'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">上课地点</text>
+      <input class="form-input" placeholder="请输入上课地点" bindinput="onLocationInput" value="{{location}}" />
+    </view>
+  </view>
+
+  <button class="btn-save" bindtap="save">保存</button>
+</view>

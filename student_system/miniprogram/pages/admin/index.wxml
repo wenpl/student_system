@@ -1,0 +1,125 @@
+<!--pages/admin/index.wxml-->
+<view class="admin-container">
+  <!-- 数据概览 -->
+  <view class="overview-section">
+    <view class="overview-header">
+      <text class="overview-title">数据概览</text>
+      <text class="overview-date">{{today}}</text>
+    </view>
+    <view class="overview-grid">
+      <view class="overview-item">
+        <text class="overview-value">{{stats.studentCount}}</text>
+        <text class="overview-label">学员总数</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-value">{{stats.classCount}}</text>
+        <text class="overview-label">班级总数</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-value">{{stats.teacherCount}}</text>
+        <text class="overview-label">老师总数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 待办事项 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">待处理</text>
+    </view>
+    <view class="todo-grid">
+      <view class="todo-item" bindtap="goToAudit">
+        <view class="todo-icon audit">
+          <image src="/images/icon-audit-white.png"></image>
+        </view>
+        <view class="todo-info">
+          <text class="todo-value">{{pendingAudits}}</text>
+          <text class="todo-label">待审核</text>
+        </view>
+      </view>
+      <view class="todo-item" bindtap="goToBooking">
+        <view class="todo-icon booking">
+          <text style="font-size:24px;">📋</text>
+        </view>
+        <view class="todo-info">
+          <text class="todo-value">{{todayBookingCount}}</text>
+          <text class="todo-label">今日约课</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">快捷入口</text>
+    </view>
+    <view class="quick-grid">
+      <view class="quick-item" bindtap="goToStudent">
+        <view class="quick-icon student">👤</view>
+        <text class="quick-name">学员管理</text>
+      </view>
+      <view class="quick-item" bindtap="goToClass">
+        <view class="quick-icon class">👥</view>
+        <text class="quick-name">班级管理</text>
+      </view>
+      <view class="quick-item" bindtap="goToSchedule">
+        <view class="quick-icon schedule">📅</view>
+        <text class="quick-name">排课管理</text>
+      </view>
+      <view class="quick-item" bindtap="goToTeacher">
+        <view class="quick-icon teacher">👨‍🏫</view>
+        <text class="quick-name">老师管理</text>
+      </view>
+    </view>
+    <view class="quick-grid second-row">
+      <view class="quick-item" bindtap="goToNotice">
+        <view class="quick-icon notice">📢</view>
+        <text class="quick-name">公告管理</text>
+      </view>
+      <view class="quick-item" bindtap="goToBooking">
+        <view class="quick-icon booking">📝</view>
+        <text class="quick-name">约课管理</text>
+      </view>
+      <view class="quick-item" bindtap="goToStats">
+        <view class="quick-icon stats">📊</view>
+        <text class="quick-name">数据统计</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 约课概况 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">约课概况</text>
+      <text class="section-action" bindtap="goToBooking">查看</text>
+    </view>
+    <view class="booking-card">
+      <view class="booking-main">
+        <text class="booking-label">本月约课</text>
+        <text class="booking-value">{{stats.monthBookingCount}}次</text>
+      </view>
+      <view class="booking-detail">
+        <view class="booking-item">
+          <text class="booking-item-label">今日约课</text>
+          <text class="booking-item-value">{{stats.todayBookingCount}}次</text>
+        </view>
+        <view class="booking-divider"></view>
+        <view class="booking-item">
+          <text class="booking-item-label">待上课</text>
+          <text class="booking-item-value">{{stats.pendingBookingCount}}次</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-nav">
+    <view class="nav-item active">
+      <text class="nav-text">管理后台</text>
+    </view>
+    <view class="nav-item" bindtap="goToProfile">
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>

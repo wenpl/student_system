@@ -1,0 +1,23 @@
+<!--pages/profile/notification-settings/index.wxml-->
+<view class="page-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">课程提醒</text>
+      <switch checked="{{classReminder}}" bindchange="onClassReminderChange" color="#5B9BD5" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">提前提醒时间</text>
+      <picker mode="selector" range="{{['15分钟', '30分钟', '60分钟']}}" value="{{reminderTime === 15 ? 0 : reminderTime === 60 ? 2 : 1}}" bindchange="onReminderTimeChange">
+        <text class="form-value">{{reminderTime}}分钟</text>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">通知提醒</text>
+      <switch checked="{{noticeAlert}}" bindchange="onNoticeAlertChange" color="#5B9BD5" />
+    </view>
+  </view>
+
+  <view class="tip-section">
+    <text class="tip-text">开启课程提醒后，将在上课前提醒您</text>
+  </view>
+</view>

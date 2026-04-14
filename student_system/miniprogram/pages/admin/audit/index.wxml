@@ -1,0 +1,74 @@
+<!--pages/admin/audit/index.wxml-->
+<view class="audit-container">
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'pending' ? 'active' : ''}}" bindtap="switchTab" data-tab="pending">
+      待审核 ({{pendingList.length}})
+    </view>
+    <view class="tab-item {{currentTab === 'processed' ? 'active' : ''}}" bindtap="switchTab" data-tab="processed">
+      已处理
+    </view>
+  </view>
+
+  <!-- 待审核列表 -->
+  <view wx:if="{{currentTab === 'pending'}}" class="list-section">
+    <view wx:if="{{pendingList.length === 0}}" class="empty-state">
+      <text>暂无待审核项</text>
+    </view>
+    <view wx:else class="request-list">
+      <view class="request-card" wx:for="{{pendingList}}" wx:key="_id">
+        <view class="request-header">
+          <text class="parent-name">{{item.userName}}</text>
+          <text class="request-time">{{item.createTimeText}}</text>
+        </view>
+        <view class="request-body">
+          <view class="info-row">
+            <text class="info-label">学员姓名：</text>
+            <text class="info-value">{{item.studentName}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">所在班级：</text>
+            <text class="info-value">{{item.className}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">关系：</text>
+            <text class="info-value">{{item.relationText}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">联系电话：</text>
+            <text class="info-value">{{item.phone}}</text>
+          </view>
+        </view>
+        <view class="request-actions">
+          <button class="btn-approve" catchtap="approve" data-id="{{item._id}}">通过</button>
+          <button class="btn-reject" catchtap="reject" data-id="{{item._id}}">拒绝</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已处理列表 -->
+  <view wx:if="{{currentTab === 'processed'}}" class="list-section">
+    <view wx:if="{{processedList.length === 0}}" class="empty-state">
+      <text>暂无已处理记录</text>
+    </view>
+    <view wx:else class="request-list">
+      <view class="request-card processed" wx:for="{{processedList}}" wx:key="_id">
+        <view class="request-header">
+          <text class="parent-name">{{item.userName}}</text>
+          <text class="status status-{{item.status}}">{{item.statusText}}</text>
+        </view>
+        <view class="request-body">
+          <view class="info-row">
+            <text class="info-label">学员姓名：</text>
+            <text class="info-value">{{item.studentName}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">所在班级：</text>
+            <text class="info-value">{{item.className}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

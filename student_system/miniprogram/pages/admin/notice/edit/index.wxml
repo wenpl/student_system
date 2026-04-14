@@ -1,0 +1,29 @@
+<!--pages/admin/notice/edit/index.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">标题 *</text>
+      <input class="form-input" placeholder="请输入公告标题" value="{{title}}" bindinput="onTitleInput" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">类型</text>
+      <picker mode="selector" range="{{typeOptions}}" value="{{typeIndex}}" bindchange="onTypeChange">
+        <view class="form-picker">
+          <text>{{typeOptions[typeIndex]}}</text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">内容 *</text>
+      <textarea class="form-textarea" placeholder="请输入公告内容" value="{{content}}" bindinput="onContentInput" maxlength="1000" />
+    </view>
+  </view>
+
+  <view class="btn-group">
+    <button class="btn-draft" bindtap="saveDraft">保存草稿</button>
+    <button class="btn-publish" bindtap="publish">发布</button>
+  </view>
+</view>

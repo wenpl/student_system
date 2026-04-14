@@ -1,0 +1,60 @@
+<!--pages/parent/bind-student/index.wxml-->
+<view class="bind-container">
+  <view class="form-section">
+    <view class="form-title">绑定学员</view>
+
+    <!-- 选择班级 -->
+    <view class="form-item">
+      <text class="form-label">选择班级</text>
+      <picker mode="selector" range="{{classList}}" range-key="name" bindchange="onClassChange">
+        <view class="form-picker">
+          <text class="{{selectedClassName ? 'selected' : 'placeholder'}}">
+            {{selectedClassName || '请选择班级'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 选择学员 -->
+    <view class="form-item" wx:if="{{selectedClassId}}">
+      <text class="form-label">选择学员</text>
+      <picker mode="selector" range="{{studentList}}" range-key="nameCn" bindchange="onStudentChange">
+        <view class="form-picker">
+          <text class="{{selectedStudentName ? 'selected' : 'placeholder'}}">
+            {{selectedStudentName || '请选择学员'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 与学员关系 -->
+    <view class="form-item" wx:if="{{selectedStudentId}}">
+      <text class="form-label">与学员关系</text>
+      <view class="relation-list">
+        <view class="relation-item {{relation === 'father' ? 'active' : ''}}" bindtap="selectRelation" data-value="father">父亲</view>
+        <view class="relation-item {{relation === 'mother' ? 'active' : ''}}" bindtap="selectRelation" data-value="mother">母亲</view>
+        <view class="relation-item {{relation === 'other' ? 'active' : ''}}" bindtap="selectRelation" data-value="other">其他</view>
+      </view>
+    </view>
+
+    <!-- 就读学校 -->
+    <view class="form-item" wx:if="{{selectedStudentId}}">
+      <text class="form-label">就读学校</text>
+      <input class="form-input" placeholder="请输入就读学校" bindinput="onSchoolInput" value="{{school}}" />
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="form-item" wx:if="{{selectedStudentId}}">
+      <text class="form-label">联系电话</text>
+      <input class="form-input" type="number" placeholder="请输入联系电话" bindinput="onPhoneInput" value="{{phone}}" maxlength="11" />
+    </view>
+  </view>
+
+  <view class="tips">
+    <text>提示：提交后需等待管理员审核通过</text>
+  </view>
+
+  <button class="btn-submit" bindtap="submitBind">提交申请</button>
+</view>

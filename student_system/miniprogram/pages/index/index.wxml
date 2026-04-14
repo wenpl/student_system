@@ -1,0 +1,7 @@
+<!--pages/index/index.wxml-->
+<view class="index-container">
+  <view class="loading-section">
+    <view class="loading-icon"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

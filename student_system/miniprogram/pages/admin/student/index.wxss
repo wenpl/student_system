@@ -1,0 +1,266 @@
+/* pages/admin/student/index.wxss - 现代简约学员管理页面 */
+
+.student-manage {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding-bottom: 120rpx;
+}
+
+/* ==================== 搜索区域 ==================== */
+.search-section {
+  display: flex;
+  padding: 24rpx;
+  gap: 16rpx;
+}
+
+.search-bar {
+  flex: 1;
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.search-bar input {
+  font-size: 28rpx;
+}
+
+.filter-btn {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 32rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ==================== 筛选面板 ==================== */
+.filter-panel {
+  background-color: #FFFFFF;
+  margin: 0 24rpx 24rpx;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.clear-btn {
+  color: var(--primary-color);
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.filter-option {
+  padding: 12rpx 24rpx;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  border: 2rpx solid transparent;
+  transition: all 0.25s ease;
+}
+
+.filter-option.active {
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ==================== 统计栏 ==================== */
+.stats-bar {
+  padding: 0 24rpx;
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 学员列表 ==================== */
+.student-list {
+  padding: 0 24rpx;
+}
+
+.student-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.student-card:active {
+  transform: scale(0.99);
+}
+
+.student-main {
+  display: flex;
+  align-items: center;
+}
+
+.student-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-right: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(74, 144, 217, 0.3);
+}
+
+.student-info {
+  flex: 1;
+}
+
+.name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.name-cn {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.name-en {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.meta-row {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 8rpx;
+}
+
+.class-name, .remain-hours {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  margin-right: 8rpx;
+}
+
+.status-dot.success { background-color: var(--success-color); }
+.status-dot.warning { background-color: var(--warning-color); }
+.status-dot.error { background-color: var(--error-color); }
+
+.status-text {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* ==================== 操作按钮 ==================== */
+.student-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.btn-edit, .btn-delete {
+  flex: 1;
+  height: 72rpx;
+  font-size: 26rpx;
+  border-radius: 16rpx;
+  font-weight: 500;
+  border: none;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 217, 0.2);
+}
+
+.btn-delete {
+  background-color: #FFFFFF;
+  color: var(--error-color);
+  border: 2rpx solid var(--error-color);
+}
+
+.btn-edit:active, .btn-delete:active {
+  transform: scale(0.98);
+}
+
+/* ==================== 新增按钮 ==================== */
+.add-btn {
+  position: fixed;
+  bottom: 48rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  padding: 24rpx 64rpx;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 8rpx 32rpx rgba(74, 144, 217, 0.35);
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.add-btn:active {
+  transform: translateX(-50%) scale(0.98);
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  color: var(--text-tertiary);
+  font-size: 28rpx;
+}

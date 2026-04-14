@@ -1,0 +1,92 @@
+<!--pages/admin/student/edit/index.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">中文名 *</text>
+      <input class="form-input" placeholder="请输入中文名" bindinput="onNameCnInput" value="{{nameCn}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">英文名</text>
+      <input class="form-input" placeholder="请输入英文名" bindinput="onNameEnInput" value="{{nameEn}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">性别</text>
+      <view class="radio-group">
+        <view class="radio-item {{gender === '男' ? 'active' : ''}}" bindtap="onGenderChange" data-value="男">男</view>
+        <view class="radio-item {{gender === '女' ? 'active' : ''}}" bindtap="onGenderChange" data-value="女">女</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">出生日期</text>
+      <picker mode="date" start="2005-01-01" end="2025-12-31" bindchange="onBirthdayChange" value="{{birthday}}">
+        <view class="form-picker">
+          <text class="{{birthday ? 'selected' : 'placeholder'}}">
+            {{birthday || '请选择出生日期'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">就读学校</text>
+      <input class="form-input" placeholder="请输入就读学校" bindinput="onSchoolInput" value="{{school}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">所属班级 *</text>
+      <picker mode="selector" range="{{classList}}" range-key="name" bindchange="onClassChange">
+        <view class="form-picker">
+          <text class="{{className ? 'selected' : 'placeholder'}}">
+            {{className || '请选择班级'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">家长姓名</text>
+      <input class="form-input" placeholder="请输入家长姓名" bindinput="onParentNameInput" value="{{parentName}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input class="form-input" type="number" placeholder="请输入联系电话" bindinput="onPhoneInput" value="{{phone}}" maxlength="11" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">紧急联系电话</text>
+      <input class="form-input" type="number" placeholder="请输入紧急联系电话" bindinput="onEmergencyPhoneInput" value="{{emergencyPhone}}" maxlength="11" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">英语基础</text>
+      <picker mode="selector" range="{{englishLevelList}}" bindchange="onEnglishLevelChange" value="{{englishLevelIndex}}">
+        <view class="form-picker">
+          <text class="{{englishLevel ? 'selected' : 'placeholder'}}">
+            {{englishLevel || '请选择英语基础'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">报名日期</text>
+      <picker mode="date" start="2020-01-01" end="2030-12-31" bindchange="onEnrollDateChange" value="{{enrollDate}}">
+        <view class="form-picker">
+          <text class="{{enrollDate ? 'selected' : 'placeholder'}}">
+            {{enrollDate || '请选择报名日期'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <button class="btn-save" bindtap="save">保存</button>
+</view>

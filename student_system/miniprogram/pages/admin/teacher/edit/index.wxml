@@ -1,0 +1,42 @@
+<!--pages/admin/teacher/edit/index.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">姓名 *</text>
+      <input class="form-input" placeholder="请输入老师姓名" bindinput="onNameInput" value="{{nickName}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input class="form-input" type="number" placeholder="请输入联系电话" bindinput="onPhoneInput" value="{{phone}}" />
+    </view>
+  </view>
+
+  <!-- 密码管理（仅编辑模式） -->
+  <view wx:if="{{isEdit}}" class="form-section" style="margin-top: 24rpx;">
+    <view class="form-item" style="border-bottom:none;">
+      <text class="form-label">账号密码</text>
+      <view class="password-actions">
+        <button class="btn-set-pwd" bindtap="togglePasswordSection">设置新密码</button>
+        <button class="btn-reset-pwd" bindtap="resetPassword">重置为默认</button>
+      </view>
+    </view>
+
+    <!-- 自定义密码输入区域 -->
+    <view wx:if="{{showPasswordSection}}" class="password-form">
+      <view class="form-item">
+        <text class="form-label">新密码</text>
+        <input class="form-input" type="text" password="{{true}}" placeholder="请输入新密码(6-20位)" maxlength="20" bindinput="onNewPasswordInput" value="{{newPassword}}" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">确认密码</text>
+        <input class="form-input" type="text" password="{{true}}" placeholder="请再次输入新密码" maxlength="20" bindinput="onConfirmPasswordInput" value="{{confirmPassword}}" />
+      </view>
+      <view class="form-item" style="border-bottom:none;">
+        <button class="btn-confirm-pwd" bindtap="setPassword">确认修改密码</button>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-save" bindtap="save">保存</button>
+</view>

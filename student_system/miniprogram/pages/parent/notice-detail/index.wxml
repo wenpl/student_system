@@ -1,0 +1,14 @@
+<!--pages/parent/notice-detail/index.wxml-->
+<view class="detail-container">
+  <view wx:if="{{notice}}" class="notice-detail">
+    <view class="notice-header">
+      <view class="notice-type {{notice.type === 'important' ? 'important' : notice.type === 'activity' ? 'activity' : ''}}">{{notice.typeText}}</view>
+      <text class="notice-time">{{notice.timeText}}</text>
+    </view>
+    <view class="notice-title">{{notice.title}}</view>
+    <view class="notice-content">{{notice.content}}</view>
+  </view>
+  <view wx:else class="loading">
+    <text>加载中...</text>
+  </view>
+</view>

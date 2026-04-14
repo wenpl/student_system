@@ -1,0 +1,72 @@
+<!--pages/teacher/class-detail/index.wxml-->
+<view class="class-detail-container">
+  <!-- 班级信息卡片 -->
+  <view class="class-card">
+    <view class="class-header">
+      <view class="class-icon"></view>
+      <view class="class-info">
+        <text class="class-name">{{classInfo.name}}</text>
+        <text class="class-meta">{{classInfo.courseName || '课程'}} · {{classInfo.teacherName || '老师'}}</text>
+      </view>
+    </view>
+    <view class="class-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.studentCount}}</text>
+        <text class="stat-label">学员数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalCourses}}</text>
+        <text class="stat-label">已上课时</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'students' ? 'active' : ''}}" bindtap="switchTab" data-tab="students">学员名单</view>
+    <view class="tab-item {{currentTab === 'schedule' ? 'active' : ''}}" bindtap="switchTab" data-tab="schedule">课程安排</view>
+  </view>
+
+  <!-- 学员名单 -->
+  <view wx:if="{{currentTab === 'students'}}" class="section">
+    <view wx:if="{{students.length === 0}}" class="empty-state">
+      <view class="empty-icon"></view>
+      <text class="empty-text">暂无学员</text>
+    </view>
+    <view wx:else class="student-list">
+      <view class="student-item" wx:for="{{students}}" wx:key="_id" bindtap="goToStudentDetail" data-id="{{item._id}}">
+        <image class="student-avatar" src="{{item.photo || '/images/default-student.png'}}"></image>
+        <view class="student-info">
+          <text class="student-name">{{item.nameCn}} {{item.nameEn}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快捷操作 -->
+    <view class="action-bar">
+      <button class="action-btn primary" bindtap="goToBooking">约课信息</button>
+    </view>
+  </view>
+
+  <!-- 课程安排 -->
+  <view wx:if="{{currentTab === 'schedule'}}" class="section">
+    <view wx:if="{{schedules.length === 0}}" class="empty-state">
+      <view class="empty-icon"></view>
+      <text class="empty-text">暂无课程安排</text>
+    </view>
+    <view wx:else class="schedule-list">
+      <view class="schedule-item {{item.isToday ? 'today' : ''}} {{item.isPast ? 'past' : ''}}" wx:for="{{schedules}}" wx:key="_id">
+        <view class="schedule-date">
+          <text class="date-day">{{item.dateText}}</text>
+          <text class="date-week">{{item.weekText}}</text>
+        </view>
+        <view class="schedule-info">
+          <text class="schedule-time">{{item.startTime || '09:00'}} - {{item.endTime || '10:30'}}</text>
+          <text class="schedule-class">{{classInfo.name}}</text>
+        </view>
+        <view wx:if="{{item.isToday}}" class="today-badge">今日</view>
+      </view>
+    </view>
+  </view>
+</view>

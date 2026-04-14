@@ -1,0 +1,119 @@
+<!--pages/teacher/index.wxml-->
+<view class="teacher-container">
+  <!-- 顶部信息 -->
+  <view class="header-section">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"></image>
+      <view class="user-text">
+        <text class="greeting">{{userInfo.nickName || '老师'}}，你好</text>
+        <text class="sub-text">今天有 {{todayCourseCount}} 节课</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷功能 -->
+  <view class="section">
+    <view class="quick-actions">
+      <view class="action-item" bindtap="goToBooking">
+        <view class="action-icon booking">
+          <image src="/images/icon-calendar-white.png"></image>
+        </view>
+        <text class="action-name">约课信息</text>
+      </view>
+      <view class="action-item" bindtap="goToNotice" style="position:relative;">
+        <view class="action-icon notice">
+          <image src="/images/icon-notice-white.png"></image>
+        </view>
+        <text class="action-name">公告查看</text>
+        <view wx:if="{{unreadNoticeCount > 0}}" class="unread-dot"></view>
+      </view>
+      <view class="action-item" bindtap="goToClassManage">
+        <view class="action-icon comment">
+          <image src="/images/icon-comment-white.png"></image>
+        </view>
+        <text class="action-name">课堂管理</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的班级 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">我的班级</text>
+    </view>
+    <view wx:if="{{classes.length === 0}}" class="empty-state">
+      <text class="empty-text">暂无负责班级</text>
+    </view>
+    <view wx:else class="class-list">
+      <view class="class-card" wx:for="{{classes}}" wx:key="_id" bindtap="goToClassDetail" data-id="{{item._id}}">
+        <view class="class-info">
+          <text class="class-name">{{item.name}}</text>
+          <text class="class-type">{{item.courseType}}</text>
+        </view>
+        <view class="class-meta">
+          <text class="student-count">{{item.studentCount || 0}} 名学员</text>
+          <text class="class-time">{{item.scheduleTime}}</text>
+        </view>
+        <image class="arrow-icon" src="/images/icon-arrow-right.png"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日课程 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">今日课程</text>
+    </view>
+    <view wx:if="{{todayCourses.length === 0}}" class="empty-state">
+      <text class="empty-text">今天没有课程安排</text>
+    </view>
+    <view wx:else class="course-list">
+      <view class="course-card" wx:for="{{todayCourses}}" wx:key="_id">
+        <view class="course-header">
+          <text class="course-name">{{item.courseName}}</text>
+          <text class="course-time">{{item.startTime}} - {{item.endTime}}</text>
+        </view>
+        <view class="course-body">
+          <text class="class-name">{{item.className}}</text>
+          <text class="location">{{item.location}}</text>
+        </view>
+        <view class="course-footer">
+          <button class="btn-small btn-primary" catchtap="goToClassDetail" data-id="{{item.classId}}">查看班级</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近约课（约课查看有独立页面，此处仅做简要展示） -->
+  <view class="section" wx:if="{{recentBookings.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">最近约课</text>
+      <text class="section-more" bindtap="goToBooking">查看全部</text>
+    </view>
+    <view class="todo-list">
+      <view class="todo-item" wx:for="{{recentBookings}}" wx:key="_id" bindtap="goToBooking">
+        <view class="todo-icon booking {{item.type === '试听' ? 'trial' : ''}}">
+          <text>{{item.type === '试听' ? '试' : '约'}}</text>
+        </view>
+        <view class="todo-content">
+          <text class="todo-title">{{item.studentName}}</text>
+          <text class="todo-desc">{{item.date}} {{item.timeSlot}}</text>
+          <text class="todo-desc">家长：{{item.parentName}}</text>
+        </view>
+        <view class="todo-action">
+          <text class="action-tag {{item.type === '试听' ? 'trial' : ''}}">{{item.type}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-nav">
+    <view class="nav-item active">
+      <text class="nav-text">工作台</text>
+    </view>
+    <view class="nav-item" bindtap="goToProfile">
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>

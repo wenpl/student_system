@@ -1,0 +1,184 @@
+/* pages/admin/booking/index.wxss - 现代简约约课管理页面 */
+
+.admin-booking-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+}
+
+/* ==================== 筛选区域 ==================== */
+.filter-section {
+  background-color: #FFFFFF;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.filter-row {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.filter-item {
+  flex: 1;
+}
+
+.filter-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  margin-bottom: 8rpx;
+}
+
+.filter-picker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  font-size: 26rpx;
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+}
+
+.filter-picker:active {
+  border-color: var(--primary-color);
+}
+
+.picker-arrow {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-reset {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  padding: 8rpx 24rpx;
+  font-weight: 500;
+}
+
+/* ==================== 统计 ==================== */
+.stats-bar {
+  padding: 24rpx;
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 列表 ==================== */
+.booking-list {
+  padding: 0 24rpx;
+}
+
+.booking-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.booking-card:active {
+  transform: scale(0.99);
+}
+
+.booking-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.booking-date {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 16rpx;
+}
+
+.booking-slot {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+  flex: 1;
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  border-radius: 8rpx;
+}
+
+.status-tag {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
+.status-tag.booked {
+  color: var(--primary-color);
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+}
+
+.status-tag.cancelled {
+  color: var(--text-tertiary);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.status-tag.completed {
+  color: var(--success-color);
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+}
+
+.booking-body {
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  padding: 6rpx 0;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+  width: 80rpx;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.info-phone {
+  font-size: 24rpx;
+  color: var(--primary-color);
+  margin-left: 16rpx;
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  border-radius: 8rpx;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  color: var(--text-tertiary);
+  font-size: 28rpx;
+}

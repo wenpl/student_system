@@ -1,0 +1,25 @@
+<!--pages/profile/change-password/index.wxml-->
+<view class="page-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">旧密码</text>
+      <input class="form-input" type="text" password placeholder="请输入旧密码" bindinput="onOldPasswordInput" value="{{oldPassword}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">新密码</text>
+      <input class="form-input" type="text" password placeholder="6-20新密码" bindinput="onNewPasswordInput" value="{{newPassword}}" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">确认密码</text>
+      <input class="form-input" type="text" password placeholder="再次输入新密码" bindinput="onConfirmPasswordInput" value="{{confirmPassword}}" />
+    </view>
+  </view>
+
+  <view class="tip-section">
+    <text class="tip-text">密码长度为6-20位，修改后请牢记新密码</text>
+  </view>
+
+  <view class="btn-section">
+    <button class="btn-save" bindtap="submit">确认修改</button>
+  </view>
+</view>

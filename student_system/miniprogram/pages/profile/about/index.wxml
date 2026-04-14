@@ -1,0 +1,25 @@
+<!--pages/profile/about/index.wxml-->
+<view class="page-container">
+  <view class="logo-section">
+    <view class="logo-placeholder">
+      <text class="logo-text">英语启蒙</text>
+    </view>
+    <text class="app-name">{{appName}}</text>
+    <text class="app-version">版本 {{version}}</text>
+  </view>
+
+  <view class="info-section">
+    <view class="info-item">
+      <text class="info-label">应用名称</text>
+      <text class="info-value">{{appName}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">当前版本</text>
+      <text class="info-value">v{{version}}</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text class="copyright">Copyright 2026 英语启蒙培训班</text>
+  </view>
+</view>

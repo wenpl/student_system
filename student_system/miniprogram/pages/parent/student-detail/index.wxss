@@ -1,0 +1,521 @@
+/* pages/parent/student-detail/index.wxss - 现代简约学员详情页 */
+
+.student-detail-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding: 24rpx;
+  padding-bottom: 180rpx;
+}
+
+/* ==================== 学员卡片 ==================== */
+.student-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.student-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(74, 144, 217, 0.3);
+}
+
+.growth-badge {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #4A90D9, #36B5A0);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+  white-space: nowrap;
+  box-shadow: 0 2rpx 8rpx rgba(74, 144, 217, 0.3);
+}
+
+.student-info {
+  margin-left: 24rpx;
+  flex: 1;
+}
+
+.student-name {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8rpx;
+}
+
+.student-class {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 8rpx;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+}
+
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  margin-right: 8rpx;
+}
+
+.status-dot.status-normal { background-color: var(--success-color); }
+.status-dot.status-warning { background-color: var(--warning-color); }
+.status-dot.status-error { background-color: var(--error-color); }
+
+.status-text {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* ==================== 标签栏 ==================== */
+.tab-bar {
+  display: flex;
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  border-radius: 16rpx;
+  transition: all 0.25s ease;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 217, 0.3);
+}
+
+/* ==================== 基本信息 ==================== */
+.info-section {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.info-value.highlight {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ==================== 签到记录 ==================== */
+.attendance-section {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 28rpx 0;
+  margin-bottom: 24rpx;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.06) 0%, rgba(54, 181, 160, 0.04) 100%);
+  border-radius: 16rpx;
+}
+
+.stats-item {
+  text-align: center;
+  flex: 1;
+}
+
+.stats-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 50%, transparent 100%);
+}
+
+.stats-value {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8rpx;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.record-list {
+  margin-top: 16rpx;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48rpx 0;
+  color: var(--text-tertiary);
+  font-size: 28rpx;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-left {
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.record-date-badge {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.record-date-badge.success {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+  color: var(--success-color);
+}
+
+.record-date-badge.fail {
+  background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+  color: var(--error-color);
+}
+
+.record-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.record-date {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  margin-bottom: 4rpx;
+}
+
+.record-course {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 4rpx;
+}
+
+.record-time {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.record-status {
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.record-status.success {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+  color: var(--success-color);
+}
+
+.record-status.fail {
+  background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+  color: var(--error-color);
+}
+
+/* ==================== 学习成果 ==================== */
+.growth-section {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.growth-card {
+  padding: 24rpx;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.06) 0%, rgba(54, 181, 160, 0.04) 100%);
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.growth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.growth-title {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.growth-level {
+  font-size: 32rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.growth-progress {
+  margin-top: 16rpx;
+}
+
+.progress-bar {
+  height: 16rpx;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4A90D9 0%, #36B5A0 100%);
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+}
+
+.data-card {
+  padding: 24rpx 0;
+}
+
+.data-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+}
+
+.data-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.data-item {
+  text-align: center;
+}
+
+.data-value {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8rpx;
+}
+
+.data-label {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* ==================== 出勤率进度条 ==================== */
+.attendance-rate-card {
+  padding: 24rpx 0;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.rate-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.rate-bar {
+  flex: 1;
+  height: 16rpx;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.rate-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+.rate-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--success-color);
+  min-width: 80rpx;
+  text-align: right;
+}
+
+/* ==================== 课堂评语 ==================== */
+.comments-card {
+  padding: 24rpx 0;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.comment-list {
+  margin-top: 16rpx;
+}
+
+.comment-item {
+  padding: 20rpx;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.comment-item:last-child {
+  margin-bottom: 0;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.comment-teacher {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.comment-date {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.comment-content {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* ==================== 快捷操作 ==================== */
+.action-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background-color: #FFFFFF;
+  padding: 24rpx 0;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.action-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  margin-bottom: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  transition: transform 0.2s ease;
+}
+
+.action-icon.schedule {
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(74, 144, 217, 0.05) 100%);
+}
+
+.action-icon.checkin {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+}
+
+.action-icon.leave {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.1) 0%, rgba(250, 173, 20, 0.05) 100%);
+}
+
+.action-icon.payment {
+  background: linear-gradient(135deg, rgba(235, 47, 150, 0.1) 0%, rgba(235, 47, 150, 0.05) 100%);
+}
+
+.action-item:active .action-icon {
+  transform: scale(0.95);
+}
+
+.action-name {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}

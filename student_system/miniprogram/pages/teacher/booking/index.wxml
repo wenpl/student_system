@@ -1,0 +1,73 @@
+<!--pages/teacher/booking/index.wxml-->
+<view class="teacher-booking-container">
+  <!-- 日期选择 -->
+  <view class="date-section">
+    <view class="section-title">选择日期</view>
+    <view class="date-row">
+      <view class="date-btn {{showAll ? 'active' : ''}}" bindtap="showAllBookings">全部</view>
+      <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange" class="date-picker-wrap">
+        <view class="date-picker {{!showAll ? 'active' : ''}}">
+          <text class="date-value">{{selectedDate}}</text>
+          <text class="date-arrow">></text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 按日期查看：时间段列表 -->
+  <view class="section" wx:if="{{!showAll}}">
+    <view class="section-title">约课情况</view>
+
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:else class="slot-list">
+      <view class="slot-item {{item.hasBooking ? 'has-booking' : 'free'}}" wx:for="{{timeSlots}}" wx:key="timeSlot">
+        <view class="slot-time-col">
+          <text class="slot-time">{{item.timeSlot}}</text>
+        </view>
+        <view class="slot-content-col">
+          <block wx:if="{{item.hasBooking}}">
+            <view class="booking-detail" wx:for="{{item.bookings}}" wx:for-item="booking" wx:key="_id">
+              <text class="detail-student">{{booking.studentName}}</text>
+              <text class="detail-parent">家长：{{booking.parentName}}</text>
+            </view>
+          </block>
+          <block wx:else>
+            <text class="free-text">空闲</text>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 全部约课列表 -->
+  <view class="section" wx:if="{{showAll}}">
+    <view class="section-title">全部约课 ({{allBookings.length}}条)</view>
+
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+
+    <view wx:elif="{{allBookings.length === 0}}" class="empty-state">
+      <text>暂无约课记录</text>
+    </view>
+
+    <view wx:else class="all-booking-list">
+      <view class="all-booking-item" wx:for="{{allBookings}}" wx:key="_id">
+        <view class="all-booking-date">
+          <text class="all-date-text">{{item.date}}</text>
+          <text class="all-time-text">{{item.timeSlot}}</text>
+        </view>
+        <view class="all-booking-info">
+          <text class="all-student-name">{{item.studentName}}</text>
+          <text class="all-parent-name">家长：{{item.parentName}}</text>
+        </view>
+        <view class="all-booking-type {{item.type === '试听' ? 'trial' : ''}}">
+          <text>{{item.type}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

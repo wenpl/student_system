@@ -1,0 +1,65 @@
+<!--pages/admin/booking/index.wxml-->
+<view class="admin-booking-container">
+  <!-- 筛选条件 -->
+  <view class="filter-section">
+    <view class="filter-row">
+      <view class="filter-item">
+        <text class="filter-label">老师</text>
+        <picker range="{{teacherOptions}}" range-key="name" value="{{teacherIndex}}" bindchange="onTeacherChange">
+          <view class="filter-picker">
+            <text>{{teacherOptions[teacherIndex].name || '全部'}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+      </view>
+      <view class="filter-item">
+        <text class="filter-label">日期</text>
+        <picker mode="date" value="{{selectedDate}}" bindchange="onDateChange">
+          <view class="filter-picker">
+            <text>{{selectedDate || '全部'}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+      </view>
+    </view>
+    <view class="filter-actions">
+      <view class="btn-reset" bindtap="resetFilter">重置</view>
+    </view>
+  </view>
+
+  <!-- 统计 -->
+  <view class="stats-bar">
+    <text>共 {{filteredBookings.length}} 条记录</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{filteredBookings.length === 0 && !loading}}" class="empty-state">
+    <text>暂无约课记录</text>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:else class="booking-list">
+    <view class="booking-card" wx:for="{{filteredBookings}}" wx:key="_id">
+      <view class="booking-header">
+        <text class="booking-date">{{item.date}}</text>
+        <text class="booking-slot">{{item.timeSlot}}</text>
+        <text class="status-tag {{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="booking-body">
+        <view class="info-row">
+          <text class="info-label">学员</text>
+          <text class="info-value">{{item.studentName || '--'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">家长</text>
+          <text class="info-value">{{item.parentName || '--'}}</text>
+          <text class="info-phone" wx:if="{{item.parentPhone && item.parentPhone !== '--'}}">{{item.parentPhone}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">老师</text>
+          <text class="info-value">{{item.teacherName || '--'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

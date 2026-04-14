@@ -1,0 +1,95 @@
+<!--pages/parent/booking/index.wxml-->
+<view class="booking-container">
+
+  <!-- 学员选择器（未选学员时显示） -->
+  <view wx:if="{{showStudentPicker}}" class="student-picker-section">
+    <view class="picker-title">请选择学员</view>
+    <view wx:if="{{studentList.length === 0}}" class="empty-state">
+      <text>暂无绑定的员，请先绑定学员</text>
+    </view>
+    <view wx:else class="student-picker-list">
+      <view class="student-picker-item" wx:for="{{studentList}}" wx:key="_id" bindtap="onSelectStudent" data-index="{{index}}">
+        <text class="picker-student-name">{{item.nameCn}}</text>
+        <text class="picker-student-class">{{item.className || '未分班'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已选学员信息 -->
+  <view wx:if="{{!showStudentPicker && studentId}}" class="student-section">
+    <view class="student-card">
+      <view class="student-row">
+        <text class="label">学员</text>
+        <text class="value">{{studentInfo.nameCn || '--'}}</text>
+      </view>
+      <view class="student-row">
+        <text class="label">班级</text>
+        <text class="value">{{classInfo.name || '未分班'}}</text>
+      </view>
+      <view class="student-row">
+        <text class="label">类型</text>
+        <text class="value">{{classInfo.name ? '正式课' : '试听课'}}</text>
+      </view>
+      <view wx:if="{{studentList.length > 1}}" class="change-student" bindtap="changeStudent">
+        <text>切换学员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 老师选择 -->
+  <view class="section" wx:if="{{studentId && !showStudentPicker}}">
+    <view class="section-title">选择老师</view>
+    <picker mode="selector" range="{{teacherList}}" range-key="name" bindchange="onTeacherChange">
+      <view class="teacher-picker">
+        <text class="teacher-value">{{selectedTeacherName || '请选择老师'}}</text>
+        <text class="picker-arrow">></text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 日期选择器（已选学员后显示） -->
+  <view class="section" wx:if="{{studentId && !showStudentPicker}}">
+    <view class="section-title">选择日期</view>
+    <scroll-view scroll-x class="date-scroll">
+      <view class="date-list">
+        <view class="date-item {{item.dateStr === selectedDate ? 'active' : ''}} {{item.isPast ? 'past' : ''}}"
+              wx:for="{{dateList}}" wx:key="dateStr"
+              bindtap="selectDate" data-date="{{item.dateStr}}"
+              data-past="{{item.isPast}}">
+          <text class="date-day">{{item.dayText}}</text>
+          <text class="date-num">{{item.dateText}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 时间段选择 -->
+  <view class="section" wx:if="{{studentId && !showStudentPicker && selectedDate}}">
+    <view class="section-title">选择时间段 <text class="date-hint">{{selectedDate}}</text></view>
+    <view wx:if="{{loadingSlots}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+    <view wx:else class="time-grid">
+      <view class="time-slot {{item.booked ? 'disabled' : ''}} {{item.timeSlot === selectedSlot ? 'selected' : ''}}"
+            wx:for="{{timeSlots}}" wx:key="timeSlot"
+            bindtap="selectSlot" data-slot="{{item.timeSlot}}" data-booked="{{item.booked}}">
+        <text class="slot-time">{{item.timeSlot}}</text>
+        <text class="slot-status">{{item.booked ? '已约满' : '可预约'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 确认预约 -->
+  <view class="confirm-section" wx:if="{{selectedSlot}}">
+    <view class="confirm-info">
+      <text>{{selectedDate}} {{selectedSlot}}</text>
+    </view>
+    <button class="btn-confirm" bindtap="submitBooking">确认预约</button>
+  </view>
+
+  <!-- 底部入口 -->
+  <view class="footer-link" bindtap="goToBookingList">
+    <text>查看我的约课记录</text>
+    <text class="arrow">></text>
+  </view>
+</view>

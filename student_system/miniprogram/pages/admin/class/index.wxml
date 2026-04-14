@@ -1,0 +1,41 @@
+<!--pages/admin/class/index.wxml-->
+<view class="class-manage">
+  <!-- 统计信息 -->
+  <view class="stats-bar">
+    <text>共 {{classes.length}} 个班级</text>
+  </view>
+
+  <!-- 班级列表 -->
+  <view wx:if="{{classes.length === 0}}" class="empty-state">
+    <text>暂无班级数据</text>
+  </view>
+  <view wx:else class="class-list">
+    <view class="class-card" wx:for="{{classes}}" wx:key="_id">
+      <view class="class-main" bindtap="viewDetail" data-id="{{item._id}}">
+        <view class="class-header">
+          <text class="class-name">{{item.name}}</text>
+          <text class="class-type">{{item.courseType}}</text>
+        </view>
+        <view class="class-body">
+          <view class="info-item">
+            <text class="info-label">上课时间：</text>
+            <text class="info-value">{{item.scheduleTime || '未设置'}}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-label">学员人数：</text>
+            <text class="info-value">{{item.studentCount || 0}} 人</text>
+          </view>
+        </view>
+      </view>
+      <view class="class-actions">
+        <button class="btn-edit" catchtap="editClass" data-id="{{item._id}}">编辑</button>
+        <button class="btn-delete" catchtap="deleteClass" data-id="{{item._id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 新增按钮 -->
+  <view class="add-btn" bindtap="addClass">
+    <text>+ 新增班级</text>
+  </view>
+</view>

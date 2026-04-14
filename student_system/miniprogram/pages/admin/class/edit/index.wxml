@@ -1,0 +1,33 @@
+<!--pages/admin/class/edit/index.wxml-->
+<view class="edit-container">
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">班级名称 *</text>
+      <input class="form-input" placeholder="请输入班级名称" bindinput="onNameInput" value="{{name}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">课程类型</text>
+      <input class="form-input" placeholder="如：幼儿英语、少儿英语" bindinput="onCourseTypeInput" value="{{courseType}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">上课时间</text>
+      <input class="form-input" placeholder="如：周六 09:00-10:30" bindinput="onScheduleInput" value="{{scheduleTime}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">授课老师</text>
+      <picker mode="selector" range="{{teacherList}}" range-key="nickName" bindchange="onTeacherChange">
+        <view class="form-picker">
+          <text class="{{teacherName ? 'selected' : 'placeholder'}}">
+            {{teacherName || '请选择老师'}}
+          </text>
+          <text class="picker-arrow">></text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <button class="btn-save" bindtap="save">保存</button>
+</view>

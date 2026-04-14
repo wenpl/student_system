@@ -1,0 +1,540 @@
+/* pages/parent/index.wxss - 现代简约家长端首页 */
+
+.parent-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding-bottom: 120rpx;
+}
+
+/* ==================== 顶部欢迎区域 ==================== */
+.header-section {
+  background: linear-gradient(165deg, #4A90D9 0%, #36B5A0 100%);
+  padding: 48rpx 32rpx 80rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-section::before {
+  content: '';
+  position: absolute;
+  top: -100rpx;
+  right: -100rpx;
+  width: 300rpx;
+  height: 300rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.user-text {
+  margin-left: 24rpx;
+}
+
+.greeting {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+  letter-spacing: 1rpx;
+}
+
+.sub-text {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 1rpx;
+}
+
+/* ==================== 待审核提示 ==================== */
+.pending-tip {
+  margin: -32rpx 24rpx 0;
+  padding: 20rpx 28rpx;
+  background: linear-gradient(135deg, #FFF7E6 0%, #FFF1CC 100%);
+  border-radius: 16rpx;
+  border-left: 6rpx solid #FAAD14;
+  box-shadow: 0 4rpx 16rpx rgba(250, 173, 20, 0.15);
+  position: relative;
+  z-index: 10;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #D48806;
+  font-weight: 500;
+}
+
+/* ==================== 通用区块 ==================== */
+.section {
+  margin: 24rpx;
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 1rpx;
+}
+
+.section-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.section-action {
+  font-size: 26rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ==================== 学员卡片 ==================== */
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.student-card {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 16rpx;
+  transition: all 0.25s ease;
+  border: 1rpx solid rgba(74, 144, 217, 0.08);
+}
+
+.student-card:active {
+  transform: scale(0.99);
+  background: linear-gradient(135deg, #F1F5F9 0%, #E8F0F8 100%);
+}
+
+.student-avatar-text {
+  width: 88rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 16rpx rgba(74, 144, 217, 0.3);
+}
+
+.student-info {
+  flex: 1;
+  margin-left: 20rpx;
+  min-width: 0;
+}
+
+.student-name {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.name-cn {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.name-en {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.student-meta {
+  display: flex;
+  gap: 24rpx;
+}
+
+.class-name, .remain-hours {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.arrow-icon {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+  margin-left: 8rpx;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0;
+}
+
+.empty-icon-text {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 12rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  margin-bottom: 24rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(74, 144, 217, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-small {
+  height: 64rpx;
+  padding: 0 48rpx;
+}
+
+/* ==================== 快捷功能 ==================== */
+.quick-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 8rpx 0;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.action-icon {
+  width: 96rpx;
+  height: 96rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24rpx;
+  font-size: 40rpx;
+  transition: transform 0.2s ease;
+}
+
+.action-icon.schedule {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+}
+
+.action-icon.booking {
+  background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+}
+
+.action-icon.notice {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.action-item:active .action-icon {
+  transform: scale(0.95);
+}
+
+.action-name {
+  font-size: 26rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.unread-dot {
+  position: absolute;
+  top: 0;
+  right: 8rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: var(--error-color);
+  border: 2rpx solid #FFFFFF;
+}
+
+/* ==================== 今日课程 ==================== */
+.empty-course {
+  padding: 32rpx 0;
+  text-align: center;
+}
+
+.empty-course .empty-text {
+  color: var(--text-tertiary);
+}
+
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.course-item {
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.course-time {
+  width: 100rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding-right: 16rpx;
+  background: linear-gradient(180deg, rgba(74, 144, 217, 0.08) 0%, rgba(54, 181, 160, 0.04) 100%);
+}
+
+.time-text {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.course-divider {
+  width: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.divider-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  box-shadow: 0 0 0 4rpx rgba(74, 144, 217, 0.15);
+}
+
+.divider-line {
+  flex: 1;
+  width: 2rpx;
+  background: linear-gradient(180deg, rgba(74, 144, 217, 0.3) 0%, rgba(54, 181, 160, 0.1) 100%);
+  margin-top: 8rpx;
+}
+
+.course-content {
+  flex: 1;
+  padding: 16rpx 16rpx 16rpx 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.course-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6rpx;
+}
+
+.course-info {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* ==================== 底部导航 ==================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background-color: #FFFFFF;
+  display: flex;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 100;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-item.active .nav-text {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.nav-text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 弹窗样式 ==================== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 48rpx 32rpx;
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40rpx;
+  color: var(--text-primary);
+}
+
+.modal-form {
+  margin-bottom: 32rpx;
+}
+
+.modal-form-item {
+  margin-bottom: 24rpx;
+}
+
+.modal-label {
+  display: block;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.modal-input {
+  width: 100%;
+  height: 88rpx;
+  background-color: #F5F7FA;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+  transition: all 0.25s ease;
+}
+
+.modal-input:focus {
+  background-color: #FFFFFF;
+  border-color: var(--primary-color);
+}
+
+.gender-select {
+  display: flex;
+  gap: 24rpx;
+}
+
+.gender-item {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background-color: #F5F7FA;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  border: 2rpx solid transparent;
+  transition: all 0.25s ease;
+}
+
+.gender-item.active {
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.modal-btn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  color: #FFFFFF;
+  border-radius: 48rpx;
+  font-size: 35rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 20rpx rgba(74, 144, 217, 0.3);
+  transition: all 0.25s ease;
+  letter-spacing: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-btn:active {
+  transform: scale(0.98);
+}
+
+.modal-btn::after {
+  border: none;
+}

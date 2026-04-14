@@ -1,0 +1,44 @@
+<!--pages/parent/schedule/index.wxml-->
+<view class="schedule-container">
+  <!-- 周选择器 -->
+  <view class="week-selector">
+    <view class="week-nav" bindtap="prevWeek">
+      <text>Last</text>
+    </view>
+    <view class="week-info">
+      <text class="week-text">{{weekText}}</text>
+    </view>
+    <view class="week-nav" bindtap="nextWeek">
+      <text>Next</text>
+    </view>
+  </view>
+
+  <!-- 日期栏 -->
+  <view class="date-bar">
+    <view class="date-item {{item.isToday ? 'today' : ''}} {{item.fullDate === selectedDate ? 'selected' : ''}}" wx:for="{{dateList}}" wx:key="fullDate" bindtap="selectDate" data-date="{{item.fullDate}}">
+      <text class="day-name">{{item.dayName}}</text>
+      <text class="day-date">{{item.date}}</text>
+    </view>
+  </view>
+
+  <!-- 课程列表 -->
+  <view class="course-list">
+    <view class="course-list-title">{{selectedDate}} 课程</view>
+    <view wx:if="{{courses.length === 0}}" class="empty-state">
+      <text>当天暂无课程安排</text>
+    </view>
+    <block wx:else>
+      <view class="course-item" wx:for="{{courses}}" wx:key="_id">
+        <view class="course-time">
+          <text>{{item.startTime}}</text>
+          <text>{{item.endTime}}</text>
+        </view>
+        <view class="course-info">
+          <text class="course-name">{{item.courseName}}</text>
+          <text class="course-detail">{{item.teacherName}} · {{item.className}}</text>
+          <text class="course-students">学员：{{item.students}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

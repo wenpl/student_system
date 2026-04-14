@@ -1,0 +1,97 @@
+<!--pages/profile/edit/index.wxml-->
+<view class="edit-container">
+  <!-- 头像 -->
+  <view class="form-section">
+    <view class="form-item avatar-item" bindtap="chooseAvatar">
+      <text class="form-label">头像</text>
+      <view class="avatar-right">
+        <image class="avatar-preview" src="{{avatarUrl || '/images/default-avatar.png'}}"></image>
+        <text class="form-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">姓名</text>
+      <input class="form-input" placeholder="请输入真实姓名" value="{{nickName}}" bindinput="onNameInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">手机号</text>
+      <input class="form-input" type="number" maxlength="11" placeholder="请输入手机号" value="{{phone}}" bindinput="onPhoneInput" />
+    </view>
+  </view>
+
+  <!-- 老师扩展信息 -->
+  <block wx:if="{{role === 'teacher'}}">
+    <view class="form-section">
+      <view class="form-item">
+        <text class="form-label">英文名</text>
+        <input class="form-input" placeholder="请输入英文名" value="{{nameEn}}" bindinput="onNameEnInput" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">性别</text>
+        <radio-group class="radio-group" bindchange="onGenderChange">
+          <label class="radio-label">
+            <radio value="男" checked="{{gender === '男'}}" color="#5B9BD5" />
+            <text>男</text>
+          </label>
+          <label class="radio-label">
+            <radio value="女" checked="{{gender === '女'}}" color="#5B9BD5" />
+            <text>女</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="form-item">
+        <text class="form-label">出生日期</text>
+        <picker mode="date" value="{{birthday}}" start="1950-01-01" end="2010-12-31" bindchange="onBirthdayChange">
+          <view class="picker-value {{birthday ? '' : 'placeholder'}}">
+            {{birthday || '请选择出生日期'}}
+          </view>
+        </picker>
+      </view>
+      <view class="form-item bio-item">
+        <text class="form-label">个人简介</text>
+        <textarea class="form-textarea" placeholder="请输入个人简介" value="{{bio}}" bindinput="onBioInput" maxlength="200" auto-height />
+      </view>
+    </view>
+
+    <!-- 密码修改 -->
+    <view class="form-section">
+      <view class="form-item" bindtap="goToChangePassword">
+        <text class="form-label">修改密码</text>
+        <view style="display:flex;align-items:center;">
+          <text class="form-value" style="margin-right:8rpx;">去修改</text>
+          <text class="form-arrow">></text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 管理员密码修改 -->
+  <block wx:if="{{role === 'admin'}}">
+    <view class="form-section">
+      <view class="form-item" bindtap="goToChangePassword">
+        <text class="form-label">修改密码</text>
+        <view style="display:flex;align-items:center;">
+          <text class="form-value" style="margin-right:8rpx;">去修改</text>
+          <text class="form-arrow">></text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 身份信息（只读） -->
+  <view class="form-section">
+    <view class="form-item">
+      <text class="form-label">身份</text>
+      <text class="form-value">{{roleText}}</text>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="btn-section">
+    <button class="btn-save" bindtap="save">保存</button>
+  </view>
+</view>

@@ -1,0 +1,42 @@
+<!--pages/admin/teacher/index.wxml-->
+<view class="teacher-manage">
+  <!-- 统计信息 -->
+  <view class="stats-bar">
+    <text>共 {{teachers.length}} 名老师</text>
+  </view>
+
+  <!-- 老师列表 -->
+  <view wx:if="{{teachers.length === 0}}" class="empty-state">
+    <text>暂无老师数据</text>
+  </view>
+  <view wx:else class="teacher-list">
+    <view class="teacher-card" wx:for="{{teachers}}" wx:key="_id">
+      <view class="teacher-main">
+        <view class="teacher-avatar">
+          <text>{{item.nickName[0]}}</text>
+        </view>
+        <view class="teacher-info">
+          <view class="name-row">
+            <text class="teacher-name">{{item.nickName}}</text>
+            <text class="status-badge active">在职</text>
+          </view>
+          <view class="meta-row">
+            <text class="phone-text">{{item.phone || '未设置电话'}}</text>
+          </view>
+          <view class="meta-row">
+            <text class="class-count">负责 {{item.classCount || 0}} 个班级</text>
+          </view>
+        </view>
+      </view>
+      <view class="teacher-actions">
+        <button class="btn-edit" catchtap="editTeacher" data-id="{{item._id}}">编辑</button>
+        <button class="btn-delete" catchtap="deleteTeacher" data-id="{{item._id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 新增按钮 -->
+  <view class="add-btn" bindtap="addTeacher">
+    <text>+ 新增老师</text>
+  </view>
+</view>

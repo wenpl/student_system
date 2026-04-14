@@ -1,0 +1,88 @@
+<!--pages/teacher/student-detail/index.wxml-->
+<view class="student-detail">
+  <!-- 学员信息卡片 -->
+  <view class="info-card">
+    <view class="card-header">
+      <text class="name">{{student.nameCn}}</text>
+      <text class="name-en" wx:if="{{student.nameEn}}">{{student.nameEn}}</text>
+    </view>
+    <view class="card-meta">
+      <text class="meta-item">{{student.gender || '-'}}</text>
+      <text class="meta-divider">|</text>
+      <text class="meta-item">{{student.age || '-'}}岁</text>
+      <text class="meta-divider">|</text>
+      <text class="meta-item">{{student.className || '未分班'}}</text>
+    </view>
+  </view>
+
+  <!-- 详细信息 -->
+  <view class="section">
+    <view class="section-title">基本信息</view>
+    <view class="info-list">
+      <view class="info-item">
+        <text class="info-label">就读学校</text>
+        <text class="info-value">{{student.school || '-'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">英语基础</text>
+        <text class="info-value">{{student.englishLevel || '零基础'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">联系电话</text>
+        <text class="info-value">{{student.phone || '-'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 老师可编辑区域 -->
+  <view class="section">
+    <view class="section-title">老师编辑</view>
+
+    <!-- 编辑英文名 -->
+    <view class="edit-item">
+      <text class="edit-label">英文名</text>
+      <view class="edit-row">
+        <input class="edit-input" placeholder="请输入英文名" bindinput="onNameEnInput" value="{{editNameEn}}" />
+        <view class="btn-small" bindtap="saveNameEn">保存</view>
+      </view>
+    </view>
+
+    <!-- 编辑英语水平 -->
+    <view class="edit-item">
+      <text class="edit-label">英语水平</text>
+      <view class="edit-row">
+        <picker mode="selector" range="{{englishLevelList}}" bindchange="onEnglishLevelChange" value="{{englishLevelIndex}}" class="edit-picker">
+          <view class="picker-text">{{editEnglishLevel || '请选择'}}</view>
+        </picker>
+        <view class="btn-small" bindtap="saveEnglishLevel">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交课堂评语 -->
+  <view class="section">
+    <view class="section-title">课堂评语</view>
+    <textarea class="comment-textarea" placeholder="请输入课堂评语..." bindinput="onCommentInput" value="{{commentContent}}" maxlength="500"></textarea>
+    <view class="comment-footer">
+      <text class="char-count">{{commentContent.length || 0}}/500</text>
+      <view class="btn-submit" bindtap="submitComment">提交评语</view>
+    </view>
+  </view>
+
+  <!-- 评语历史列表 -->
+  <view class="section">
+    <view class="section-title">评语记录</view>
+    <view wx:if="{{comments.length === 0}}" class="empty-state">
+      <text>暂无评语记录</text>
+    </view>
+    <view wx:else class="comment-list">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="_id">
+        <view class="comment-header">
+          <text class="comment-teacher">{{item.teacherName || '老师'}}</text>
+          <text class="comment-date">{{item.dateText}}</text>
+        </view>
+        <text class="comment-content">{{item.content}}</text>
+      </view>
+    </view>
+  </view>
+</view>

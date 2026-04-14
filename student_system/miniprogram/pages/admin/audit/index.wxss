@@ -1,0 +1,183 @@
+/* pages/admin/audit/index.wxss - 现代简约审核页面 */
+
+.audit-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+}
+
+/* ==================== 标签栏 ==================== */
+.tab-bar {
+  display: flex;
+  background-color: #FFFFFF;
+  padding: 0 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 28rpx 0;
+  font-size: 30rpx;
+  color: var(--text-secondary);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.tab-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #4A90D9 0%, #36B5A0 100%);
+  border-radius: 3rpx;
+}
+
+/* ==================== 列表区域 ==================== */
+.list-section {
+  padding: 24rpx;
+}
+
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.request-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.request-card:active {
+  transform: scale(0.99);
+}
+
+.request-card.processed {
+  opacity: 0.7;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.parent-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.request-time {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.request-body {
+  margin-bottom: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+  width: 160rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  flex: 1;
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  gap: 24rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.btn-approve, .btn-reject {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.btn-approve {
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(82, 196, 26, 0.3);
+}
+
+.btn-reject {
+  background-color: #FFFFFF;
+  color: var(--error-color);
+  border: 2rpx solid var(--error-color);
+}
+
+.btn-approve:active, .btn-reject:active {
+  transform: scale(0.98);
+}
+
+/* ==================== 状态标签 ==================== */
+.status {
+  font-size: 26rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
+.status-approved {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, rgba(82, 196, 26, 0.05) 100%);
+  color: var(--success-color);
+}
+
+.status-rejected {
+  background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+  color: var(--error-color);
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  color: var(--text-tertiary);
+  font-size: 28rpx;
+}

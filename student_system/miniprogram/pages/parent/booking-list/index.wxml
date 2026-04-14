@@ -1,0 +1,34 @@
+<!--pages/parent/booking-list/index.wxml-->
+<view class="booking-list-container">
+  <!-- 标题统计 -->
+  <view class="stats-bar">
+    <text>共 {{bookings.length}} 条约课记录</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{bookings.length === 0 && !loading}}" class="empty-state">
+    <text>暂无约课记录</text>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:else class="list">
+    <view class="booking-card" wx:for="{{bookings}}" wx:key="_id">
+      <view class="booking-main">
+        <view class="booking-date-row">
+          <text class="booking-date">{{item.date}}</text>
+          <text class="booking-slot">{{item.timeSlot}}</text>
+        </view>
+        <view class="booking-info-row">
+          <text class="booking-teacher">老师：{{item.teacherName || '--'}}</text>
+          <text class="booking-student">学员：{{item.studentName || '--'}}</text>
+        </view>
+        <view class="booking-status-row">
+          <text class="status-tag {{item.status}}">{{item.statusText}}</text>
+        </view>
+      </view>
+      <view class="booking-actions" wx:if="{{item.canCancel}}">
+        <button class="btn-cancel" catchtap="cancelBooking" data-id="{{item._id}}" data-index="{{index}}">取消预约</button>
+      </view>
+    </view>
+  </view>
+</view>

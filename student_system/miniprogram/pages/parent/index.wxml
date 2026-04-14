@@ -1,0 +1,137 @@
+<!--pages/parent/index.wxml-->
+<view class="parent-container">
+  <!-- 顶部欢迎区域 -->
+  <view class="header-section">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"></image>
+      <view class="user-text">
+        <text class="greeting">你好，{{userInfo.nickName || '家长'}}</text>
+        <text class="sub-text">今天是个学习的好日子</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 待审核提示 -->
+  <view wx:if="{{pendingBindings.length > 0}}" class="pending-tip">
+    <text class="tip-text">您有 {{pendingBindings.length}} 条绑定申请待审核</text>
+  </view>
+
+  <!-- 学员卡片列表 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">我的孩子</text>
+      <view class="section-actions">
+        <text class="section-action" bindtap="showAddStudentModal">+ 添加学员</text>
+        <text class="section-action" bindtap="goToBindStudent">+ 绑定已有</text>
+      </view>
+    </view>
+
+    <view wx:if="{{students.length === 0}}" class="empty-state">
+      <view class="empty-icon-text">📚</view>
+      <text class="empty-text">暂无绑定学员</text>
+      <text class="empty-hint">绑定学员后可查看学习信息</text>
+      <button class="btn-primary btn-small" bindtap="goToBindStudent">立即绑定</button>
+    </view>
+
+    <view wx:else class="student-list">
+      <view class="student-card" wx:for="{{students}}" wx:key="_id" bindtap="goToStudentDetail" data-id="{{item._id}}">
+        <view class="student-avatar-text">{{item.nameCn[0]}}</view>
+        <view class="student-info">
+          <view class="student-name">
+            <text class="name-cn">{{item.nameCn}}</text>
+            <text class="name-en">{{item.nameEn}}</text>
+          </view>
+          <view class="student-meta">
+            <text class="class-name">{{item.className || '未分班'}}</text>
+          </view>
+        </view>
+        <text class="arrow-icon">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷功能 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">快捷功能</text>
+    </view>
+    <view class="quick-actions">
+      <view class="action-item" bindtap="goToSchedule">
+        <view class="action-icon schedule">📅</view>
+        <text class="action-name">课表查询</text>
+      </view>
+      <view class="action-item" bindtap="goToBooking">
+        <view class="action-icon booking">📋</view>
+        <text class="action-name">约课</text>
+      </view>
+      <view class="action-item" bindtap="goToNotice" style="position:relative;">
+        <view class="action-icon notice">📢</view>
+        <text class="action-name">公告</text>
+        <view wx:if="{{unreadNoticeCount > 0}}" class="unread-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日课程 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">今日课程</text>
+      <text class="section-action" bindtap="goToSchedule">查看全部</text>
+    </view>
+    <view wx:if="{{todayCourses.length === 0}}" class="empty-course">
+      <text class="empty-text">今天没有课程安排</text>
+    </view>
+    <view wx:else class="course-list">
+      <view class="course-item" wx:for="{{todayCourses}}" wx:key="_id">
+        <view class="course-time">
+          <text class="time-text">{{item.startTime}}</text>
+          <text class="time-text">{{item.endTime}}</text>
+        </view>
+        <view class="course-divider">
+          <view class="divider-dot"></view>
+          <view class="divider-line"></view>
+        </view>
+        <view class="course-content">
+          <text class="course-name">{{item.className}}</text>
+          <text class="course-info">{{item.classroom}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 创建学员弹窗 -->
+  <view class="modal" wx:if="{{showAddStudent}}">
+    <view class="modal-mask" bindtap="hideAddStudentModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">添加学员</view>
+      <view class="modal-form">
+        <view class="modal-form-item">
+          <text class="modal-label">孩子姓名 *</text>
+          <input class="modal-input" placeholder="请输入孩子姓名" value="{{newStudentName}}" bindinput="onNewStudentNameInput" />
+        </view>
+        <view class="modal-form-item">
+          <text class="modal-label">性别</text>
+          <view class="gender-select">
+            <view class="gender-item {{newStudentGender === '男' ? 'active' : ''}}" bindtap="onNewStudentGenderChange" data-value="男">男</view>
+            <view class="gender-item {{newStudentGender === '女' ? 'active' : ''}}" bindtap="onNewStudentGenderChange" data-value="女">女</view>
+          </view>
+        </view>
+        <view class="modal-form-item">
+          <text class="modal-label">就读学校</text>
+          <input class="modal-input" placeholder="请输入就读学校" value="{{newStudentSchool}}" bindinput="onNewStudentSchoolInput" />
+        </view>
+      </view>
+      <button class="modal-btn" bindtap="submitAddStudent">确认添加</button>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-nav">
+    <view class="nav-item active">
+      <text class="nav-text">首页</text>
+    </view>
+    <view class="nav-item" bindtap="goToProfile">
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>

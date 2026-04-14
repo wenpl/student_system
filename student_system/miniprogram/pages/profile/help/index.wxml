@@ -1,0 +1,22 @@
+<!--pages/profile/help/index.wxml-->
+<view class="page-container">
+  <view class="section-title">常见问题</view>
+  <view class="faq-list">
+    <view class="faq-item" wx:for="{{faqList}}" wx:key="id">
+      <view class="faq-question" bindtap="toggleFaq" data-id="{{item.id}}">
+        <text class="question-text">{{item.question}}</text>
+        <text class="arrow {{item.expanded ? 'arrow-up' : ''}}">></text>
+      </view>
+      <view class="faq-answer" wx:if="{{item.expanded}}">
+        <text>{{item.answer}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="contact-section">
+    <view class="section-title">联系我们</view>
+    <view class="contact-info">
+      <text>如有其他问题，请联系培训班管理员</text>
+    </view>
+  </view>
+</view>

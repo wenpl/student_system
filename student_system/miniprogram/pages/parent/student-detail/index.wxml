@@ -1,0 +1,110 @@
+<!--pages/parent/student-detail/index.wxml-->
+<view class="student-detail-container">
+  <!-- 学员信息卡片 -->
+  <view class="student-card">
+    <view class="avatar-wrapper">
+      <image class="student-avatar" src="{{student.photo || '/images/default-student.png'}}"></image>
+      <view class="growth-badge">{{student.growthLevel || '启蒙1级'}}</view>
+    </view>
+    <view class="student-info">
+      <text class="student-name">{{student.nameCn}} {{student.nameEn}}</text>
+      <text class="student-class">{{student.className || '未分班'}}</text>
+    </view>
+  </view>
+
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'info' ? 'active' : ''}}" bindtap="switchTab" data-tab="info">基本信息</view>
+    <view class="tab-item {{currentTab === 'growth' ? 'active' : ''}}" bindtap="switchTab" data-tab="growth">学习成果</view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view wx:if="{{currentTab === 'info'}}" class="info-section">
+    <view class="info-item">
+      <text class="info-label">年龄</text>
+      <text class="info-value">{{student.age || '-'}}岁</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">性别</text>
+      <text class="info-value">{{student.gender || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">就读学校</text>
+      <text class="info-value">{{student.school || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">英语基础</text>
+      <text class="info-value">{{student.englishLevel || '零基础'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">在读老师</text>
+      <text class="info-value">{{student.teacherName || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">报名时间</text>
+      <text class="info-value">{{student.enrollDate || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">家长姓名</text>
+      <text class="info-value">{{student.parentName || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">联系电话</text>
+      <text class="info-value">{{student.phone || '-'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">紧急联系电话</text>
+      <text class="info-value">{{student.emergencyPhone || '-'}}</text>
+    </view>
+  </view>
+
+  <!-- 学习成果 -->
+  <view wx:if="{{currentTab === 'growth'}}" class="growth-section">
+    <!-- 成长等级 -->
+    <view class="growth-card">
+      <view class="growth-header">
+        <text class="growth-title">当前等级</text>
+        <text class="growth-level">{{student.growthLevel || '启蒙1级'}}</text>
+      </view>
+      <view class="growth-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: 30%"></view>
+        </view>
+        <view class="progress-labels">
+          <text>启蒙1级</text>
+          <text>启蒙2级</text>
+          <text>启蒙3级</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 课堂评语 -->
+    <view class="comments-card">
+      <view class="data-title">课堂评语</view>
+      <view wx:if="{{comments.length === 0}}" class="empty-state">
+        <text>暂无课堂评语</text>
+      </view>
+      <view wx:else class="comment-list">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="_id">
+          <view class="comment-header">
+            <text class="comment-teacher">{{item.teacherName || '老师'}}</text>
+            <text class="comment-date">{{item.dateText}}</text>
+          </view>
+          <text class="comment-content">{{item.content}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="action-section">
+    <view class="action-item" bindtap="goToSchedule">
+      <view class="action-icon schedule"></view>
+      <text class="action-name">课表</text>
+    </view>
+    <view class="action-item" bindtap="goToBooking">
+      <view class="action-icon booking"></view>
+      <text class="action-name">约课</text>
+    </view>
+  </view>
+</view>

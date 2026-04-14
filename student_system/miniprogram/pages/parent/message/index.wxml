@@ -1,0 +1,33 @@
+<!--pages/parent/message/index.wxml-->
+<view class="message-container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">通知公告</text>
+    <text wx:if="{{unreadCount > 0}}" class="header-badge">{{unreadCount}}条未读</text>
+  </view>
+
+  <!-- 通知公告 -->
+  <view class="notice-section">
+    <view wx:if="{{notices.length === 0}}" class="empty-state">
+      <view class="empty-icon"></view>
+      <text class="empty-text">暂无通知</text>
+    </view>
+    <view wx:else class="notice-list">
+      <view class="notice-item {{item.isRead ? 'read' : ''}}" wx:for="{{notices}}" wx:key="_id" bindtap="viewNotice" bindlongpress="onLongPressNotice" data-id="{{item._id}}">
+        <view class="notice-header">
+          <view class="notice-type {{item.type === 'important' ? 'important' : item.type === 'activity' ? 'activity' : ''}}">{{item.typeText}}</view>
+          <text class="notice-time">{{item.timeText}}</text>
+        </view>
+        <view class="notice-title-row">
+          <text class="notice-title">{{item.title}}</text>
+          <view wx:if="{{!item.isRead}}" class="unread-dot"></view>
+        </view>
+        <view class="notice-content">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="long-press-tip">
+    <text class="tip-text">长按通知可删除</text>
+  </view>
+</view>

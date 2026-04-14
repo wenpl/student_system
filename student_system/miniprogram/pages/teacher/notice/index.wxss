@@ -1,0 +1,145 @@
+/* pages/teacher/notice/index.wxss - 现代简约老师端公告页面 */
+
+.notice-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  padding-bottom: 40rpx;
+}
+
+/* ==================== 页面标题 ==================== */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background-color: #FFFFFF;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.header-badge {
+  font-size: 24rpx;
+  color: var(--error-color);
+  background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+}
+
+/* ==================== 公告列表 ==================== */
+.notice-list {
+  padding: 24rpx;
+}
+
+.notice-item {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.notice-item:active {
+  transform: scale(0.99);
+}
+
+.notice-item.read {
+  opacity: 0.7;
+}
+
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.notice-type {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
+.notice-type.important {
+  background: linear-gradient(135deg, rgba(255, 77, 79, 0.1) 0%, rgba(255, 77, 79, 0.05) 100%);
+  color: var(--error-color);
+}
+
+.notice-type.activity {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.1) 0%, rgba(250, 173, 20, 0.05) 100%);
+  color: var(--warning-color);
+}
+
+.notice-time {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+.notice-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.notice-title-row .notice-title {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.notice-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12rpx;
+}
+
+.unread-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF4D4F 0%, #FF7875 100%);
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.notice-preview {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.6;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  background: linear-gradient(135deg, rgba(74, 144, 217, 0.1) 0%, rgba(54, 181, 160, 0.05) 100%);
+  border-radius: 50%;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text-tertiary);
+}

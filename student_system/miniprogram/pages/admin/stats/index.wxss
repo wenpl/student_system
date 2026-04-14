@@ -1,0 +1,392 @@
+/* pages/admin/stats/index.wxss - 现代简约数据统计页面 */
+
+.stats-container {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+}
+
+/* ==================== 标签栏 ==================== */
+.tab-bar {
+  display: flex;
+  background-color: #FFFFFF;
+  padding: 16rpx 24rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.tab-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #4A90D9 0%, #36B5A0 100%);
+  border-radius: 3rpx;
+}
+
+/* ==================== 数据概览 ==================== */
+.overview-section {
+  padding: 24rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.stats-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.stats-card:active {
+  transform: scale(0.98);
+}
+
+.stats-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  margin-right: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.stats-icon.student {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 217, 0.3);
+}
+
+.stats-icon.class {
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  box-shadow: 0 4rpx 12rpx rgba(82, 196, 26, 0.3);
+}
+
+.stats-icon.teacher {
+  background: linear-gradient(135deg, #FAAD14 0%, #FFC53D 100%);
+  box-shadow: 0 4rpx 12rpx rgba(250, 173, 20, 0.3);
+}
+
+.stats-icon.course {
+  background: linear-gradient(135deg, #EB2F96 0%, #F759AB 100%);
+  box-shadow: 0 4rpx 12rpx rgba(235, 47, 150, 0.3);
+}
+
+.stats-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  margin-top: 4rpx;
+}
+
+.section {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+}
+
+.quick-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.quick-item {
+  text-align: center;
+}
+
+.quick-value {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8rpx;
+}
+
+.quick-label {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 营收统计 ==================== */
+.revenue-section {
+  padding: 24rpx;
+}
+
+.revenue-summary {
+  margin-bottom: 24rpx;
+}
+
+.summary-card {
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.summary-card.main {
+  background: linear-gradient(165deg, #4A90D9 0%, #36B5A0 100%);
+  box-shadow: 0 8rpx 32rpx rgba(74, 144, 217, 0.3);
+}
+
+.summary-card.main .summary-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.summary-card.main .summary-value {
+  color: #FFFFFF;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+}
+
+.summary-value {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 8rpx;
+}
+
+.summary-value.small {
+  font-size: 36rpx;
+}
+
+.summary-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.summary-row .summary-card {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* ==================== 图表容器 ==================== */
+.chart-container {
+  padding: 16rpx 0;
+}
+
+/* ==================== 柱状图 ==================== */
+.bar-chart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 300rpx;
+  padding: 0 16rpx;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.bar-wrapper {
+  display: flex;
+  gap: 8rpx;
+  align-items: flex-end;
+  height: 200rpx;
+}
+
+.bar {
+  width: 24rpx;
+  border-radius: 6rpx 6rpx 0 0;
+}
+
+.bar.new {
+  background: linear-gradient(180deg, #4A90D9 0%, #36B5A0 100%);
+}
+
+.bar.renew {
+  background: linear-gradient(180deg, #52C41A 0%, #73D13D 100%);
+}
+
+.bar-label {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  margin-top: 8rpx;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 32rpx;
+  margin-top: 24rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 6rpx;
+  margin-right: 8rpx;
+}
+
+.legend-dot.new {
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+}
+
+.legend-dot.renew {
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+}
+
+/* ==================== 出勤统计 ==================== */
+.attendance-section {
+  padding: 24rpx;
+}
+
+.attendance-summary {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.rate-circle {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4A90D9 0%, #36B5A0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(74, 144, 217, 0.3);
+}
+
+.rate-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.rate-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.attendance-detail {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+}
+
+.detail-item {
+  text-align: center;
+}
+
+.detail-value {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.detail-value.success {
+  color: var(--success-color);
+}
+
+.detail-value.warning {
+  color: var(--warning-color);
+}
+
+.detail-value.error {
+  color: var(--error-color);
+}
+
+.detail-label {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+}
+
+/* ==================== 折线图 ==================== */
+.line-chart {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 300rpx;
+  padding: 0 16rpx;
+}
+
+.line-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.line-bar {
+  width: 32rpx;
+  background: linear-gradient(180deg, #4A90D9 0%, rgba(74, 144, 217, 0.1) 100%);
+  border-radius: 6rpx 6rpx 0 0;
+  min-height: 20rpx;
+}
+
+.line-label {
+  font-size: 22rpx;
+  color: var(--text-tertiary);
+  margin-top: 8rpx;
+}
