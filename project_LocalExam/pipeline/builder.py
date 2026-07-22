@@ -37,6 +37,11 @@ def parse_source_from_filename(filename):
         "province": "天津市",
         "city": "天津市",
         "file_name": filename,
+        "district": "未知",
+        "year": "未知",
+        "semester": "未知",
+        "grade": "未知",
+        "exam_type": "未知",
     }
 
     # 提取区名
@@ -164,12 +169,14 @@ def process_one_docx(filepath, api_key=API_KEY):
 
         # 解析题型特定字段
         if rq["question_type"] == "选择题":
-            content["options"] = _parse_options(full_text)
+            opts = _parse_options(full_text)
+            if opts:
+                content["options"] = opts
 
         elif rq["question_type"] == "解答题":
-            content["sub_questions"] = _parse_sub_questions(
-                rq["paras_with_math"]
-            )
+            subs = _parse_sub_questions(rq["paras_with_math"])
+            if subs:
+                content["sub_questions"] = subs
 
         # LLM 知识点标注（仅在 api_key 有效时调用）
         knowledge = tag_knowledge(rq, api_key) if api_key else []
@@ -213,10 +220,14 @@ def build_all(api_key=API_KEY):
     for fname in sorted(os.listdir(DOCX_DIR)):
         if not fname.endswith(".docx"):
             continue
-        filepath = os.path.join(DOCX_DIR, fname)
-        questions = process_one_docx(filepath, api_key)
-        all_questions.extend(questions)
-        print(f"  ✓ 提取 {len(questions)} 题")
+        try:
+            filepath = os.path.join(DOCX_DIR, fname)
+            questions = process_one_docx(filepath, api_key)
+            all_questions.extend(questions)
+            print(f"  ✓ {fname}: {len(questions)} 题")
+        except Exception as e:
+            print(f"  ✗ {fname}: 处理失败 - {e}")
+            continue
 
     # 组装顶层结构
     output = {
