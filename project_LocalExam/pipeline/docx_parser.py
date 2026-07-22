@@ -13,6 +13,8 @@ DOCX 解析与题目切割 + OMML→LaTeX 公式转换
 
 import os
 import re
+import zipfile
+from lxml import etree
 from docx import Document
 
 # ========== 正则锚点 ==========
@@ -262,6 +264,104 @@ def parse_docx(filepath):
     return questions
 
 
+# ========== 图片提取 ==========
+
+
+def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=None):
+    """从 DOCX 段落中提取嵌入图片，以 question_id 命名保存"""
+    if rels_map is None:
+        rels_map = _load_rels(docx_path)
+
+    images = []
+    counter = 0
+
+    for para in para_objects:
+        # 检测 drawing（新格式）
+        drawings = para._element.findall('.//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}drawing')
+        for drawing in drawings:
+            blip = drawing.findall('.//{http://schemas.openxmlformats.org/drawingml/2006/main}blip')
+            for b in blip:
+                embed = b.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
+                if embed and embed in rels_map:
+                    media_path = rels_map[embed]
+                    if media_path.startswith('media/'):
+                        counter += 1
+                        ext = os.path.splitext(media_path)[1] or '.png'
+                        if counter == 1:
+                            filename = f"{question_id}{ext}"
+                        else:
+                            filename = f"{question_id}_{counter:02d}{ext}"
+                        _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
+                        images.append(f"images/{filename}")
+
+        # 检测 VML shape（旧格式图片）
+        shapes = para._element.findall('.//{urn:schemas-microsoft-com:vml}shape')
+        for shape in shapes:
+            imagedata = shape.findall('.//{urn:schemas-microsoft-com:vml}imagedata')
+            for img in imagedata:
+                rid = img.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
+                if rid and rid in rels_map:
+                    media_path = rels_map[rid]
+                    if media_path.startswith('media/'):
+                        counter += 1
+                        ext = os.path.splitext(media_path)[1] or '.png'
+                        if counter == 1:
+                            filename = f"{question_id}{ext}"
+                        else:
+                            filename = f"{question_id}_{counter:02d}{ext}"
+                        _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
+                        images.append(f"images/{filename}")
+
+        # 检测 VML pict
+        picts = para._element.findall('.//{urn:schemas-microsoft-com:vml}pict')
+        for pict in picts:
+            for shape in pict.findall('.//{urn:schemas-microsoft-com:vml}shape'):
+                imagedata = shape.findall('.//{urn:schemas-microsoft-com:vml}imagedata')
+                for img in imagedata:
+                    rid = img.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
+                    if rid and rid in rels_map:
+                        media_path = rels_map[rid]
+                        if media_path.startswith('media/'):
+                            counter += 1
+                            ext = os.path.splitext(media_path)[1] or '.png'
+                            if counter == 1:
+                                filename = f"{question_id}{ext}"
+                            else:
+                                filename = f"{question_id}_{counter:02d}{ext}"
+                            _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
+                            images.append(f"images/{filename}")
+
+    return images
+
+
+def _load_rels(docx_path):
+    """读取 DOCX 的关系映射：rId → media/xxx.png"""
+    rels = {}
+    with zipfile.ZipFile(docx_path) as z:
+        if 'word/_rels/document.xml.rels' not in z.namelist():
+            return rels
+        rels_xml = z.read('word/_rels/document.xml.rels')
+        root = etree.fromstring(rels_xml)
+        ns = '{http://schemas.openxmlformats.org/package/2006/relationships}'
+        for rel in root:
+            rid = rel.get('Id')
+            target = rel.get('Target', '')
+            if target.startswith('media/'):
+                rels[rid] = target
+    return rels
+
+
+def _copy_image(docx_path, media_path, output_path):
+    """从 DOCX ZIP 中复制图片到输出目录"""
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with zipfile.ZipFile(docx_path) as z:
+        full_path = f'word/{media_path}'
+        if full_path in z.namelist():
+            data = z.read(full_path)
+            with open(output_path, 'wb') as f:
+                f.write(data)
+
+
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, "d:/claude/project_LocalExam")
@@ -271,9 +371,18 @@ if __name__ == "__main__":
         DOCX_DIR,
         "精品解析：天津市南开区2025-2026学年上学期八年级数学期末试卷（解析版）.docx",
     )
+
+    # 解析测试
     qs = parse_docx(test_file)
     print(f"总计提取 {len(qs)} 题\n")
     for q in qs[:3]:
         print(f"[{q['number']}] {q['question_type']}")
         print(f"  LaTeX文本: {q['paras_with_math'][0][:100]}")
         print()
+
+    # 图片提取测试
+    print("=== 图片提取测试 ===")
+    rels = _load_rels(test_file)
+    print(f"找到 {len(rels)} 个媒体关系")
+    for rid, target in list(rels.items())[:5]:
+        print(f"  {rid} → {target}")
