@@ -273,6 +273,7 @@ def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=No
         rels_map = _load_rels(docx_path)
 
     images = []
+    seen_r_ids = set()
     counter = 0
 
     for para in para_objects:
@@ -283,6 +284,9 @@ def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=No
             for b in blip:
                 embed = b.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
                 if embed and embed in rels_map:
+                    if embed in seen_r_ids:
+                        continue
+                    seen_r_ids.add(embed)
                     media_path = rels_map[embed]
                     if media_path.startswith('media/'):
                         counter += 1
@@ -301,6 +305,9 @@ def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=No
             for img in imagedata:
                 rid = img.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
                 if rid and rid in rels_map:
+                    if rid in seen_r_ids:
+                        continue
+                    seen_r_ids.add(rid)
                     media_path = rels_map[rid]
                     if media_path.startswith('media/'):
                         counter += 1

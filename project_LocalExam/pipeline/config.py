@@ -11,7 +11,7 @@ OUTPUT_DIR = os.path.join(PROJECT_ROOT, "output")
 IMAGES_DIR = os.path.join(OUTPUT_DIR, "images")
 
 # ========== LLM API ==========
-API_KEY = "your-api-key-here"  # 通义千问 API Key
+API_KEY = ""  # 通义千问 API Key（设为空以跳过 LLM 调用）
 API_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 API_MODEL = "qwen-vl-plus"
 

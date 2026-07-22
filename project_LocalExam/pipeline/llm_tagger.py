@@ -77,13 +77,21 @@ def call_llm(prompt, api_key):
     return json.loads(content.strip())
 
 
+def _normalize_knowledge(knowledge):
+    """确保 level3 是数组类型"""
+    for k in knowledge:
+        if isinstance(k.get("level3"), str):
+            k["level3"] = [k["level3"]]
+    return knowledge
+
+
 def tag_knowledge(question, api_key):
     """对一道题进行知识点标注"""
     prompt = build_knowledge_prompt(question)
     try:
         result = call_llm(prompt, api_key)
         if isinstance(result, list):
-            return result
+            return _normalize_knowledge(result)
         return []
     except Exception as e:
         print(f"  LLM 标注失败: {e}")
