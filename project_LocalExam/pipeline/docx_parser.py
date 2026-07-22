@@ -99,9 +99,25 @@ def omml_to_latex(elem):
         return f'\\sqrt{{{radicand}}}'
 
     if tag == 'd':
-        # 分隔符（括号等）——提取内部表达式
+        # 分隔符（括号等）——提取内部表达式，并用 begChr/endChr 包裹
         inner = ''.join(omml_to_latex(c) for c in elem if c.tag.endswith('}e'))
-        return inner
+        # 从 dPr 中读取 begChr 和 endChr
+        beg_chr = '('
+        end_chr = ')'
+        for child in elem:
+            if _strip_tag(child) == 'dPr':
+                beg = child.find(f'{{{MATH_NS}}}begChr')
+                if beg is not None:
+                    beg_chr = beg.get(f'{{{MATH_NS}}}val', '(')
+                end = child.find(f'{{{MATH_NS}}}endChr')
+                if end is not None:
+                    end_chr = end.get(f'{{{MATH_NS}}}val', ')')
+                break
+        # LaTeX 特殊字符转义（如 { → \{）
+        _CHR_MAP = {'{': '\\{', '}': '\\}'}
+        beg_chr = _CHR_MAP.get(beg_chr, beg_chr)
+        end_chr = _CHR_MAP.get(end_chr, end_chr)
+        return f'\\left{beg_chr}{inner}\\right{end_chr}'
 
     if tag == 'r':
         # OMML 运行（run），其下包含 m:t
@@ -159,6 +175,16 @@ def reconstruct_paragraph_text(para):
     return ''.join(result)
 
 
+def _finalize_question(current_q, current_lines, current_paras, questions):
+    """完成当前题目：写入文本字段，追加到列表"""
+    current_q["raw_text"] = "\n".join(current_lines)
+    current_q["paras_raw"] = [p.text for p in current_paras]
+    current_q["paras_with_math"] = [
+        reconstruct_paragraph_text(p) for p in current_paras
+    ]
+    questions.append(current_q)
+
+
 def parse_docx(filepath):
     """解析单份 DOCX，返回题目列表
 
@@ -198,12 +224,7 @@ def parse_docx(filepath):
         # ===== 跳过答案/解析/分析/详解/点睛 =====
         if RE_SKIP.match(text):
             if current_q is not None:
-                current_q["raw_text"] = "\n".join(current_lines)
-                current_q["paras_raw"] = [p.text for p in current_paras]
-                current_q["paras_with_math"] = [
-                    reconstruct_paragraph_text(p) for p in current_paras
-                ]
-                questions.append(current_q)
+                _finalize_question(current_q, current_lines, current_paras, questions)
                 current_q = None
                 current_lines = []
                 current_paras = []
@@ -214,12 +235,7 @@ def parse_docx(filepath):
         if m:
             # 保存上一题
             if current_q is not None:
-                current_q["raw_text"] = "\n".join(current_lines)
-                current_q["paras_raw"] = [p.text for p in current_paras]
-                current_q["paras_with_math"] = [
-                    reconstruct_paragraph_text(p) for p in current_paras
-                ]
-                questions.append(current_q)
+                _finalize_question(current_q, current_lines, current_paras, questions)
 
             current_q = {
                 "number": int(m.group(1)),
@@ -241,12 +257,7 @@ def parse_docx(filepath):
 
     # ===== 最后一题收尾 =====
     if current_q is not None:
-        current_q["raw_text"] = "\n".join(current_lines)
-        current_q["paras_raw"] = [p.text for p in current_paras]
-        current_q["paras_with_math"] = [
-            reconstruct_paragraph_text(p) for p in current_paras
-        ]
-        questions.append(current_q)
+        _finalize_question(current_q, current_lines, current_paras, questions)
 
     return questions
 
