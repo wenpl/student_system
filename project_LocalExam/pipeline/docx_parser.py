@@ -294,7 +294,7 @@ def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=No
                         _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
                         images.append(f"images/{filename}")
 
-        # 检测 VML shape（旧格式图片）
+        # 检测 VML shape（旧格式图片，含 pict 内嵌 shape）
         shapes = para._element.findall('.//{urn:schemas-microsoft-com:vml}shape')
         for shape in shapes:
             imagedata = shape.findall('.//{urn:schemas-microsoft-com:vml}imagedata')
@@ -311,25 +311,6 @@ def extract_images(para_objects, question_id, docx_path, output_dir, rels_map=No
                             filename = f"{question_id}_{counter:02d}{ext}"
                         _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
                         images.append(f"images/{filename}")
-
-        # 检测 VML pict
-        picts = para._element.findall('.//{urn:schemas-microsoft-com:vml}pict')
-        for pict in picts:
-            for shape in pict.findall('.//{urn:schemas-microsoft-com:vml}shape'):
-                imagedata = shape.findall('.//{urn:schemas-microsoft-com:vml}imagedata')
-                for img in imagedata:
-                    rid = img.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
-                    if rid and rid in rels_map:
-                        media_path = rels_map[rid]
-                        if media_path.startswith('media/'):
-                            counter += 1
-                            ext = os.path.splitext(media_path)[1] or '.png'
-                            if counter == 1:
-                                filename = f"{question_id}{ext}"
-                            else:
-                                filename = f"{question_id}_{counter:02d}{ext}"
-                            _copy_image(docx_path, media_path, os.path.join(output_dir, filename))
-                            images.append(f"images/{filename}")
 
     return images
 
