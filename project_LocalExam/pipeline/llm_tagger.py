@@ -235,21 +235,25 @@ def _normalize_knowledge(knowledge):
     return result
 
 
-def tag_knowledge(question, api_key):
-    """对一道题进行知识点标注"""
+def tag_knowledge(question, api_key, max_retries=3):
+    """对一道题进行知识点标注（结果为空时重试，LLM 输出有随机性）"""
     prompt = build_knowledge_prompt(question)
-    try:
-        result = call_llm(prompt, api_key)
-        if isinstance(result, list):
-            stem_text = "\n".join(question.get("paras_with_math", []))
-            normalized = _normalize_knowledge(result)
-            fixed = _fix_known_errors(normalized, stem_text)
-            with_comprehensive = _add_comprehensive_tag(fixed)
-            return _dedup_knowledge(with_comprehensive)
-        return []
-    except Exception as e:
-        print(f"  LLM 标注失败: {e}")
-        return []
+    for attempt in range(max_retries):
+        try:
+            result = call_llm(prompt, api_key)
+            if isinstance(result, list) and result:
+                stem_text = "\n".join(question.get("paras_with_math", []))
+                normalized = _normalize_knowledge(result)
+                fixed = _fix_known_errors(normalized, stem_text)
+                with_comprehensive = _add_comprehensive_tag(fixed)
+                deduped = _dedup_knowledge(with_comprehensive)
+                if deduped:
+                    return deduped
+            # 空结果（LLM 返回空 / 标签未匹配知识树）→ 重试
+        except Exception as e:
+            if attempt == max_retries - 1:
+                print(f"  LLM 标注失败: {e}")
+    return []
 
 
 # 图形的性质 + 图形的变化的二级模块，用于「函数与几何综合」匹配

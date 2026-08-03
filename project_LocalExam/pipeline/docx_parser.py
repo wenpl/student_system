@@ -19,14 +19,17 @@ from docx import Document
 
 # ========== 正则锚点 ==========
 
-# 大题标题：一、选择题 / 二、填空题 / 三、解答题
-RE_BIG_TITLE = re.compile(r'^[一二三]、\s*')
+# 大题标题：一、选择题 / 一．选择题 / 一.选择题 等（须为 一/二/三 + 顿号或句点）
+RE_BIG_TITLE = re.compile(r'^[一二三][、．.]\s*')
 
 # 题号：1. / 1． 开头，后接空格
 RE_NUMBER = re.compile(r'^(\d+)[．\.]\s*')
 
 # 跳过标记：答案/解析/分析/详解/点睛
 RE_SKIP = re.compile(r'^【(答案|解析|分析|详解|点睛)】')
+
+# 试卷说明/注意事项：答题卡、用笔、本卷构成、第Ⅱ卷等（不作为题目）
+RE_INSTRUCTION = re.compile(r'(答题卡|用黑色字迹|签字笔|本卷共|注意事项|第[ⅠⅡI]卷)')
 
 # 子问：(1) / （1）
 RE_SUB_QUESTION = re.compile(r'^[\(（](\d+)[\)）]')
@@ -119,6 +122,9 @@ def omml_to_latex(elem):
         _CHR_MAP = {'{': '\\{', '}': '\\}'}
         beg_chr = _CHR_MAP.get(beg_chr, beg_chr)
         end_chr = _CHR_MAP.get(end_chr, end_chr)
+        # 没有闭合括号 → 用 \right.（KaTeX 要求 \left\{ 必须有 \right. 配对）
+        if not end_chr or end_chr == '':
+            end_chr = '.'
         return f'\\left{beg_chr}{inner}\\right{end_chr}'
 
     if tag == 'r':
@@ -127,6 +133,32 @@ def omml_to_latex(elem):
             if _strip_tag(child) == 't':
                 return child.text or ''
         return ''
+
+    # 矩阵元素
+    if tag == 'm':
+        rows_content = []
+        for child in elem:
+            ct = child.tag.split('}')[1] if '}' in child.tag else child.tag
+            if ct == 'mr':
+                cells = []
+                for cell in child:
+                    cct = cell.tag.split('}')[1] if '}' in cell.tag else cell.tag
+                    if cct in ('e', 'mc'):
+                        cell_text = ''.join(omml_to_latex(c) for c in cell)
+                        cells.append(cell_text)
+                # 跳过空行（只有一个空矩阵的说明是间距控制）
+                if cells and not any(c.strip() for c in cells):
+                    continue
+                if cells:
+                    rows_content.append(' & '.join(cells))
+        if rows_content and any(r.strip() for r in rows_content):
+            matrix = r' \\ '.join(rows_content)
+            return rf'\begin{{matrix}}{matrix}\end{{matrix}}'
+        return ''
+
+    if tag in ('mr', 'mc'):
+        # 由 m 处理器统一处理，这里只透传
+        return ''.join(omml_to_latex(c) for c in elem)
 
     # 容器元素：递归处理所有子节点
     if tag in ('oMath', 'e', 'num', 'den', 'sup', 'sub', 'deg', 'oMathPara', 'dPr'):
@@ -187,6 +219,42 @@ def _finalize_question(current_q, current_lines, current_paras, questions):
     questions.append(current_q)
 
 
+def _capture_answer(text, questions):
+    """捕获【答案】后面的内容"""
+    if not questions:
+        return
+    # 去掉【答案】标记
+    ans = re.sub(r'^【答案】\s*', '', text).strip()
+    # 过滤掉以【开头的内容（如【分析】）
+    if ans and not ans.startswith('【'):
+        questions[-1]["answer"] = ans[:60]
+
+
+def _capture_analysis(para_idx, all_paras, questions):
+    """捕获【解析】后第一个有效段落的要点"""
+    if not questions:
+        return
+    for i in range(para_idx + 1, min(para_idx + 5, len(all_paras))):
+        t = all_paras[i].text.strip()
+        if not t:
+            continue
+        # 【分析】标记后的内容也有效
+        if t.startswith('【分析】') or t.startswith('【详解】'):
+            text_content = t.split('】', 1)[1].strip() if '】' in t else t
+            if text_content and len(text_content) > 3:
+                q = questions[-1]
+                if 'analysis' not in q:
+                    q["analysis"] = text_content[:80]
+                return
+        # 跳过其他【】标记
+        if t.startswith('【'):
+            continue
+        q = questions[-1]
+        if 'analysis' not in q:
+            q["analysis"] = t[:80]
+        return
+
+
 def parse_docx(filepath):
     """解析单份 DOCX，返回题目列表
 
@@ -210,7 +278,7 @@ def parse_docx(filepath):
     started = False  # 是否已遇到第一个大题标题（跳过注意事项等前置内容）
     all_paras = list(doc.paragraphs)
 
-    for para in all_paras:
+    for para_idx, para in enumerate(all_paras):
         text = para.text.strip()
 
         # ===== 大题标题：一、选择题 → 切换题型，并标记开始 =====
@@ -223,13 +291,23 @@ def parse_docx(filepath):
         if not started:
             continue
 
-        # ===== 跳过答案/解析/分析/详解/点睛 =====
+        # 试卷说明/注意事项行（答题卡、本卷共N题、第Ⅱ卷 等），不作为题目
+        if RE_INSTRUCTION.search(text):
+            continue
+
+        # ===== 跳过答案/解析/分析/详解/点睛，但解析的前两句话保留 =====
         if RE_SKIP.match(text):
             if current_q is not None:
                 _finalize_question(current_q, current_lines, current_paras, questions)
                 current_q = None
                 current_lines = []
                 current_paras = []
+            # 如果匹配到【解析】或【分析】，捕获下一段作为解析文本
+            if '解析' in text or '分析' in text:
+                _capture_analysis(para_idx, all_paras, questions)
+            # 如果匹配到【答案】，捕获答案内容
+            if '答案' in text:
+                _capture_answer(text, questions)
             continue
 
         # ===== 题号：切新题 =====

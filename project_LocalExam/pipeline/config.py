@@ -11,9 +11,10 @@ OUTPUT_DIR = os.path.join(PROJECT_ROOT, "output")
 IMAGES_DIR = os.path.join(OUTPUT_DIR, "images")
 
 # ========== LLM API ==========
-API_KEY = "sk-c29ed8a2b6e842da855188f99ee8bc57"  # 通义千问 API Key（设为空以跳过 LLM 调用）
-API_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-API_MODEL = "qwen-plus"  # 通义千问文本模型
+# DeepSeek API Key 从环境变量读取（未设置则跳过 LLM 标注）
+API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+API_URL = "https://api.deepseek.com/v1/chat/completions"
+API_MODEL = "deepseek-chat"  # DeepSeek 文本模型
 
 # ========== 知识点树 ==========
 # 4 级结构 (level1, level2, level3, level4)，共 299 条

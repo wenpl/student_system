@@ -532,6 +532,95 @@ def test_normalize_knowledge():
     print("\n  ✓ 知识标准化测试通过")
 
 
+# ==================== 测试 11：试卷说明不解析为题目 ====================
+
+
+def test_no_instruction_junk():
+    """验证不把试卷说明/注意事项（答题卡、本卷共N题等）解析成题目"""
+    print("\n" + "=" * 60)
+    print("测试 11：试卷说明不解析为题目")
+    print("=" * 60)
+
+    f = os.path.join(
+        DOCX_DIR,
+        "精品解析：天津市和平区2025-2026学年七年级下学期期末考试数学试题（解析版）.docx",
+    )
+    qs = parse_docx(f)
+
+    # 没有任何题的题干首段是指令（答题卡/本卷共/用黑色字迹）
+    for q in qs:
+        first = q["paras_with_math"][0]
+        assert not any(w in first for w in ("答题卡", "本卷共", "用黑色字迹", "签字笔")), (
+            f"FAIL: 指令行被解析为题目: {first[:40]}"
+        )
+    print("  ✓ 无指令行被解析为题目")
+
+    # 题数应为 12 选择 + 6 填空 + 7 解答 = 25（不含 2 条 第Ⅱ卷 指令）
+    assert len(qs) == 25, (
+        f"FAIL: 期望 25 题（不含指令），实际 {len(qs)}"
+    )
+    print("  ✓ 题数 = 25（12+6+7）")
+
+    # 题号连续 1..25
+    nums = sorted(q["number"] for q in qs)
+    assert nums == list(range(1, 26)), f"FAIL: 题号不连续 {nums}"
+    print("  ✓ 题号连续 1..25")
+
+    # 第二南开用「一．选择题」标题（全角句点），也应正常解析（回归：整卷曾被丢弃）
+    f2 = [x for x in os.listdir(DOCX_DIR) if "第二南开" in x]
+    assert f2, "FAIL: 找不到第二南开试卷"
+    qs2 = parse_docx(os.path.join(DOCX_DIR, f2[0]))
+    assert len(qs2) == 25, f"FAIL: 第二南开应解析 25 题，实际 {len(qs2)}"
+    assert not any("答题卡" in q["paras_with_math"][0] for q in qs2), "FAIL: 第二南开含指令垃圾题"
+    print("  ✓ 第二南开（一．标题）解析 25 题且无指令垃圾")
+
+    # 河东2024-2025 用「本卷共 13 题」（带空格），也应过滤（回归：曾被漏过）
+    f3 = [x for x in os.listdir(DOCX_DIR) if "河东区2024" in x]
+    assert f3, "FAIL: 找不到河东2024-2025试卷"
+    qs3 = parse_docx(os.path.join(DOCX_DIR, f3[0]))
+    assert len(qs3) == 25, f"FAIL: 河东2024-2025 应解析 25 题，实际 {len(qs3)}"
+    assert not any("本卷共" in q["paras_with_math"][0] for q in qs3), "FAIL: 河东2024-2025 含「本卷共」指令题"
+    print("  ✓ 河东2024-2025（带空格的本卷共）解析 25 题且无指令垃圾")
+
+    print("\n  ✓ 试卷说明过滤测试通过")
+
+
+# ==================== 测试 12：空标注自动重试 ====================
+
+
+def test_tag_retry_on_empty():
+    """验证 LLM 返回无法匹配知识树的标签时，tag_knowledge 自动重试"""
+    print("\n" + "=" * 60)
+    print("测试 12：空标注自动重试")
+    print("=" * 60)
+
+    import pipeline.llm_tagger as lt
+    real_call = lt.call_llm
+    calls = {"n": 0}
+
+    def fake_call(prompt, api_key):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            # 第一次：标签无法匹配知识树 → 归一化为空
+            return [{"level1": "不存在的分类", "level2": "xx", "level3": ["yy"], "level4": []}]
+        # 第二次：正常标签
+        return [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["提公因式法与综合分解"]}]
+
+    lt.call_llm = fake_call
+    try:
+        q = {"paras_with_math": ["用提公因式法因式分解"]}
+        out = lt.tag_knowledge(q, "fake_key")
+        assert calls["n"] == 2, f"FAIL: 空结果应重试 1 次，实际调用 {calls['n']} 次"
+        assert out and out[0]["level4"] == ["提公因式法与综合分解"], (
+            f"FAIL: 重试后应返回有效标签 {out}"
+        )
+    finally:
+        lt.call_llm = real_call
+    print("  ✓ 空结果自动重试并返回有效标签")
+
+    print("\n  ✓ 空标注自动重试测试通过")
+
+
 # ==================== 主入口 ====================
 
 
@@ -555,6 +644,8 @@ def main():
         ("test_fix_known_errors", test_fix_known_errors),
         ("test_dedup_knowledge", test_dedup_knowledge),
         ("test_normalize_knowledge", test_normalize_knowledge),
+        ("test_no_instruction_junk", test_no_instruction_junk),
+        ("test_tag_retry_on_empty", test_tag_retry_on_empty),
     ]
 
     for name, func in tests:

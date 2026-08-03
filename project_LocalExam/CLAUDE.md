@@ -118,10 +118,19 @@ python pipeline/test_pipeline.py
 
 ### API 配置
 
-编辑 `pipeline/config.py`：
-- `API_KEY` — 通义千问 API Key（设为空则跳过 LLM 标注）
-- `API_URL` — 默认 `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions`
-- `API_MODEL` — 默认 `qwen-plus`
+`pipeline/config.py`：
+- `API_KEY` — 从环境变量 `DEEPSEEK_API_KEY` 读取（未设置则跳过 LLM 标注）
+- `API_URL` — `https://api.deepseek.com/v1/chat/completions`
+- `API_MODEL` — `deepseek-chat`
+
+运行全量前设置环境变量（Windows）：
+
+```bat
+set DEEPSEEK_API_KEY=sk-xxx
+python pipeline/main.py
+```
+
+> ⚠️ Key 不写入 `config.py`，避免提交进 git。
 
 ### Pipeline 流程
 
@@ -161,13 +170,14 @@ DOCX → 正则切题 → OMML→LaTeX → 图片提取
 | `main.py` | 入口，调用 `build_all()` |
 | `test_pipeline.py` | 3 项测试：解析验证、图片提取、文件名解析 |
 
-### 当前输出（2026-07-29）
+### 当前输出（2026-08-03）
 
-- 18 份 DOCX → **418 题**
-- 覆盖七、八、九年级，含和平、南开、河东、河北、河西、红桥 6 区
-- 知识点标注覆盖率：**98%**（408/418）
+- 18 份 DOCX → **435 题**
+- 覆盖七、八、九年级（和平、南开、河东、河北、河西、红桥、第二南开、益中等）
+- 知识点标注覆盖率：**100%**（435/435，DeepSeek 标注，空结果自动重试）
 - 知识树：299 条 4 级标签（含 15 条综合题标签）
-- 综合标签已自动应用，有基础标签+综合标签双标
-- JSON 大小：~400KB
+- 综合标签自动应用（51 题：三角形综合 16、圆与三角形 13、坐标几何 8、函数与几何 6、多函数 5、函数与方程不等式 3）
+- 选择题全部 4 选项，无试卷说明/指令垃圾题
+- JSON 大小：~600KB
 - 浏览器：`output/index.html`（双击打开）+ KaTeX 渲染 + 按领域/题型筛选
 - 公式支持：分数、上下标、根式、**行列式（2×2矩阵）**、**①②③ 圈码**、**循环小数**
