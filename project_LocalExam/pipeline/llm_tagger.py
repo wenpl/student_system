@@ -5,6 +5,12 @@ import requests
 
 from pipeline.config import API_URL, API_MODEL, KNOWLEDGE_TREE
 
+# 一级分类顺序（LLM prompt 与跨章去重共用，避免两处重复）
+L1_ORDER = ['数与式', '方程与不等式', '函数', '图形的性质', '图形的变化', '统计与概率']
+
+# 由知识树派生的 level4 → (level3, level4) 查找表，避免 _fix_known_errors 硬编码标签漂移
+_L4_LABELS = {l4: (l3, l4) for _, _, l3, l4 in KNOWLEDGE_TREE if l4}
+
 
 def build_knowledge_prompt(question):
     """构造层级分步知识点标注 prompt
@@ -19,8 +25,6 @@ def build_knowledge_prompt(question):
         tree[l1][l2].setdefault(l3, set())
         if l4:
             tree[l1][l2][l3].add(l4)
-
-    L1_ORDER = ['数与式', '方程与不等式', '函数', '图形的性质', '图形的变化', '统计与概率']
 
     # 第1步：一级分类列表
     step1 = "\n".join(f"  {i+1}. {l1}" for i, l1 in enumerate(L1_ORDER))
@@ -170,6 +174,14 @@ def call_llm(prompt, api_key):
         raise
 
 
+def _find_level4_path(path_map_4, l2, predicate):
+    """在 4 级路径表中查找第一个 p4 满足 predicate 且 level2 匹配的条目"""
+    for fp4, (p1, p2, p3, p4) in path_map_4.items():
+        if predicate(p4) and p2 == l2:
+            return {"level1": p1, "level2": p2, "level3": [p3], "level4": [p4]}
+    return None
+
+
 def _normalize_knowledge(knowledge):
     """将 LLM 输出统一为 level1/level2/level3/level4 格式"""
     # 建立 3级 和 4级 路径查找表
@@ -210,18 +222,15 @@ def _normalize_knowledge(knowledge):
                     result.append({"level1": l1, "level2": l2, "level3": [l3], "level4": [cl4] if cl4 else []})
                     continue
 
-                # LLM 可能把 level4 的内容当成了 level3 输出
-                # 在 path_map_4 中查找 l3 是否是一个 level4
-                for fp4, (p1, p2, p3, p4) in path_map_4.items():
-                    if p4 == l3 and p2 == l2:
-                        result.append({"level1": p1, "level2": p2, "level3": [p3], "level4": [p4]})
-                        break
-                else:
-                    # 最后的匹配：检查 l3 是否是某个 level4 的子串
-                    for fp4, (p1, p2, p3, p4) in path_map_4.items():
-                        if (p4 in l3 or l3 in p4) and p2 == l2:
-                            result.append({"level1": p1, "level2": p2, "level3": [p3], "level4": [p4]})
-                            break
+                # LLM 可能把 level4 的内容当成了 level3 输出：在 path_map_4 中
+                # 依次尝试「精确等于 level4」和「level4 是子串」两种匹配
+                hit = _find_level4_path(path_map_4, l2, lambda p4: p4 == l3)
+                if hit:
+                    result.append(hit)
+                    continue
+                hit = _find_level4_path(path_map_4, l2, lambda p4: p4 in l3 or l3 in p4)
+                if hit:
+                    result.append(hit)
 
     return result
 
@@ -293,14 +302,15 @@ def _add_comprehensive_tag(knowledge):
 
 
 def _fix_known_errors(knowledge, stem_text):
-    """修正已知的 LLM 错误模式"""
+    """修正已知的 LLM 错误模式（标签从知识树派生，避免硬编码漂移）"""
     for k in knowledge:
-        l3 = (k.get('level3') or [''])[0]
         l4 = (k.get('level4') or [''])[0]
-        if '公因式' in stem_text and '提公因式' not in str(k):
-            k['level3'] = ['因式分解方法']; k['level4'] = ['提公因式法与综合分解']; break
+        if '公因式' in stem_text and '提公因式' not in l4:
+            l3, l4_fix = _L4_LABELS.get('提公因式法与综合分解', ('因式分解方法', '提公因式法与综合分解'))
+            k['level3'] = [l3]; k['level4'] = [l4_fix]; break
         if '高' in stem_text and '画出' in stem_text and l4 != '三角形的高与垂心':
-            k['level3'] = ['与三角形有关的线段']; k['level4'] = ['三角形的高与垂心']; break
+            l3, l4_fix = _L4_LABELS.get('三角形的高与垂心', ('与三角形有关的线段', '三角形的高与垂心'))
+            k['level3'] = [l3]; k['level4'] = [l4_fix]; break
     return knowledge
 
 
@@ -312,7 +322,7 @@ def _dedup_knowledge(knowledge):
     base = [k for k in knowledge if k['level1'] != '综合题']
     if not base:
         return knowledge
-    order = ['数与式', '方程与不等式', '函数', '图形的性质', '图形的变化', '统计与概率']
+    order = L1_ORDER
     def cr(l1): return order.index(l1) if l1 in order else -1
     l1s = set(k['level1'] for k in base)
     has_geo = any(l1 in {'图形的性质', '图形的变化'} for l1 in l1s)

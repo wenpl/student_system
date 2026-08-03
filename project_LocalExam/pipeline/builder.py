@@ -120,7 +120,7 @@ def _parse_options(stem_text):
 def _parse_sub_questions(paras):
     """从解答题段落中解析子问
 
-    匹配 （1）、(1)、①、②、③ 开头的段落
+    匹配 （1）、(1)、①、②、③ 开头的段落，编号统一为 (n) 格式
     """
     sub_questions = []
     circle_map = {'①': '1', '②': '2', '③': '3'}
@@ -134,12 +134,12 @@ def _parse_sub_questions(paras):
                 "latex": content,
             })
             continue
-        # 也匹配圆圈数字 ①②③
+        # 也匹配圆圈数字 ①②③，统一为 (n) 格式
         m = re.match(r"^([①②③])\s*(.*)", text)
         if m:
             content = m.group(2).strip()
             sub_questions.append({
-                "number": m.group(1),
+                "number": f"({circle_map[m.group(1)]})",
                 "latex": content,
             })
     return sub_questions if sub_questions else None
@@ -153,9 +153,10 @@ def _clean_stem(full_text, question_type=None):
     """
     lines = full_text.split("\n")
     cleaned = [l for l in lines if not re.match(r"^[A-D][．\.]?", l.strip())]
-    # 解答题：去掉子问行，避免和 sub_questions 重复
+    # 解答题：只去掉 _parse_sub_questions 能捕获的子问行（（n）/(n)/①②③），
+    # 避免误删（Ⅰ）（i）（提示 等无法解析为子问的合法题干行导致内容丢失
     if question_type == "解答题":
-        cleaned = [l for l in cleaned if not re.match(r"^[\(（①②③]\d?[\)）]?\s*", l.strip())]
+        cleaned = [l for l in cleaned if not re.match(r"^(?:[（(]\d+[）)]|[①②③])\s*", l.strip())]
     return "\n".join(cleaned).strip()
 
 

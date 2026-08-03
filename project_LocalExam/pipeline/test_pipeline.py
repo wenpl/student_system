@@ -15,9 +15,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pipeline.docx_parser import parse_docx, reconstruct_paragraph_text, _load_rels
-from pipeline.builder import _parse_options, parse_source_from_filename
+from pipeline.builder import _clean_stem, _parse_options, _parse_sub_questions, parse_source_from_filename
 from pipeline.config import DOCX_DIR
-from pipeline.llm_tagger import _add_comprehensive_tag
+from pipeline.llm_tagger import _add_comprehensive_tag, _dedup_knowledge, _fix_known_errors, _normalize_knowledge
 
 
 # ==================== 测试数据 ====================
@@ -332,6 +332,206 @@ def test_comprehensive_tag():
     print("\n  ✓ 综合标签测试通过")
 
 
+# ==================== 测试 6：子问解析 ====================
+
+
+def test_sub_questions():
+    """验证解答题子问解析：编号统一为 (n) 格式"""
+    print("\n" + "=" * 60)
+    print("测试 6：子问解析")
+    print("=" * 60)
+
+    # 数字编号
+    subs = _parse_sub_questions(["（1）求$x$的值；", "（2）求$y$的值；"])
+    assert [s["number"] for s in subs] == ["(1)", "(2)"], (
+        f"FAIL: 数字子问编号异常 {[s['number'] for s in subs]}"
+    )
+    print("  ✓ （1）（2）编号")
+
+    # 圆圈编号 ①②③ → 统一为 (n)
+    subs = _parse_sub_questions(["①求$x$的值；", "②求$y$的值；", "③求$z$的值；"])
+    assert [s["number"] for s in subs] == ["(1)", "(2)", "(3)"], (
+        f"FAIL: 圆圈子问编号应统一为 (n)，实际 {[s['number'] for s in subs]}"
+    )
+    print("  ✓ ①②③ → (1)(2)(3)")
+
+    print("\n  ✓ 子问解析测试通过")
+
+
+# ==================== 测试 7：题干清洗 ====================
+
+
+def test_clean_stem():
+    """验证题干清洗：不误删无法解析为子问的合法题干行（提示、（Ⅰ）等）"""
+    print("\n" + "=" * 60)
+    print("测试 7：题干清洗")
+    print("=" * 60)
+
+    # 解答题：子问行被移除
+    text = "已知$x+y=5$。\n（1）求$x$的值；\n（2）求$y$的值；"
+    cleaned = _clean_stem(text, "解答题")
+    assert "（1）求$x$" not in cleaned and "（2）求$y$" not in cleaned, (
+        f"FAIL: 子问行应从题干移除\n{cleaned}"
+    )
+    assert "已知$x+y=5$" in cleaned
+    print("  ✓ 子问行从题干移除")
+
+    # 解答题：提示行不能被误删
+    text = "设计一种方案，使总费用最少。\n（提示：每张卡纸最多可折 6 个盒子）"
+    cleaned = _clean_stem(text, "解答题")
+    assert "（提示" in cleaned, (
+        f"FAIL: 提示行被误删\n{cleaned}"
+    )
+    print("  ✓ （提示… 行保留")
+
+    # 解答题：罗马数字子问（无法解析为 (n)）保留在题干，不丢失
+    text = "求代数式的值。\n（Ⅰ）若$x=1$，求值；\n（Ⅱ）若$y=2$，求值；"
+    cleaned = _clean_stem(text, "解答题")
+    assert "（Ⅰ）" in cleaned and "（Ⅱ）" in cleaned, (
+        f"FAIL: 罗马数字子问行被误删\n{cleaned}"
+    )
+    print("  ✓ 罗马数字子问行保留")
+
+    # 选择题：选项行移除、题干保留
+    text = "下列是轴对称图形的是（　）\nA．健\nB．康\nC．和\nD．平"
+    cleaned = _clean_stem(text, "选择题")
+    assert "下列是轴对称图形" in cleaned and "健" not in cleaned, (
+        f"FAIL: 选择题清洗异常\n{cleaned}"
+    )
+    print("  ✓ 选择题选项行移除")
+
+    print("\n  ✓ 题干清洗测试通过")
+
+
+# ==================== 测试 8：已知错误修正 ====================
+
+
+def test_fix_known_errors():
+    """验证 _fix_known_errors 修正已知 LLM 错误模式"""
+    print("\n" + "=" * 60)
+    print("测试 8：已知错误修正")
+    print("=" * 60)
+
+    # 含「公因式」但未标提公因式 → 强制为 因式分解方法/提公因式法与综合分解
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["公式法分解因式"]}]
+    fixed = _fix_known_errors(k, "用提公因式法对下式进行因式分解")
+    assert fixed[0]["level4"] == ["提公因式法与综合分解"], (
+        f"FAIL: 公因式题未修正为提公因式\n{fixed}"
+    )
+    assert fixed[0]["level3"] == ["因式分解方法"]
+    print("  ✓ 公因式 → 提公因式法与综合分解")
+
+    # 已标提公因式 → 不重复修正
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["提公因式法与综合分解"]}]
+    fixed = _fix_known_errors(k, "用提公因式法对下式进行因式分解")
+    assert fixed[0]["level4"] == ["提公因式法与综合分解"]
+    print("  ✓ 已标提公因式不重复修正")
+
+    # 含「画出」「高」→ 强制为 与三角形有关的线段/三角形的高与垂心
+    k = [{"level1": "图形的性质", "level2": "三角形", "level3": ["与三角形有关的线段"], "level4": ["三角形的中线与重心"]}]
+    fixed = _fix_known_errors(k, "画出△ABC中BC边上的高")
+    assert fixed[0]["level4"] == ["三角形的高与垂心"], (
+        f"FAIL: 高/画出题未修正为三角形的高与垂心\n{fixed}"
+    )
+    assert fixed[0]["level3"] == ["与三角形有关的线段"]
+    print("  ✓ 画出/高 → 三角形的高与垂心")
+
+    print("\n  ✓ 已知错误修正测试通过")
+
+
+# ==================== 测试 9：跨章去重 ====================
+
+
+def test_dedup_knowledge():
+    """验证 _dedup_knowledge：保留综合标签 + 每个领域一个基础标签"""
+    print("\n" + "=" * 60)
+    print("测试 9：跨章去重")
+    print("=" * 60)
+
+    k = [
+        {"level1": "函数", "level2": "一次函数", "level3": [], "level4": []},
+        {"level1": "函数", "level2": "二次函数", "level3": [], "level4": []},
+        {"level1": "图形的性质", "level2": "三角形", "level3": [], "level4": []},
+        {"level1": "综合题", "level2": "跨领域综合", "level3": ["函数与其他领域"], "level4": ["函数与几何综合"]},
+    ]
+    dedup = _dedup_knowledge(k)
+    base = [x for x in dedup if x["level1"] != "综合题"]
+    zt = [x for x in dedup if x["level1"] == "综合题"]
+    assert len(zt) == 1 and zt[0]["level4"] == ["函数与几何综合"], (
+        f"FAIL: 综合标签丢失 {dedup}"
+    )
+    assert len(base) == 2, (
+        f"FAIL: 基础标签应按领域去重为 2 个，实际 {len(base)}"
+    )
+    l1s = {x["level1"] for x in base}
+    assert l1s == {"函数", "图形的性质"}, (
+        f"FAIL: 基础标签领域异常 {l1s}"
+    )
+    print("  ✓ 保留综合标签 + 每领域一个基础标签")
+
+    # 单一领域多个标签 → 只保留 1 个
+    k = [
+        {"level1": "函数", "level2": "一次函数", "level3": [], "level4": []},
+        {"level1": "函数", "level2": "二次函数", "level3": [], "level4": []},
+    ]
+    dedup = _dedup_knowledge(k)
+    base = [x for x in dedup if x["level1"] != "综合题"]
+    assert len(base) == 1, f"FAIL: 同领域多标签应去重为 1，实际 {len(base)}"
+    print("  ✓ 同领域多标签去重为 1")
+
+    print("\n  ✓ 跨章去重测试通过")
+
+
+# ==================== 测试 10：知识标准化 ====================
+
+
+def test_normalize_knowledge():
+    """验证 _normalize_knowledge：精确/近似/子串匹配，不匹配则丢弃"""
+    print("\n" + "=" * 60)
+    print("测试 10：知识标准化")
+    print("=" * 60)
+
+    # 精确 4 级路径
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["提公因式法与综合分解"]}]
+    out = _normalize_knowledge(k)
+    assert out == [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["提公因式法与综合分解"]}], (
+        f"FAIL: 4级路径匹配异常 {out}"
+    )
+    print("  ✓ 精确 4 级路径")
+
+    # 3 级路径（无 level4 输入）→ 补全为最后一个 level4（分组分解法）
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": []}]
+    out = _normalize_knowledge(k)
+    assert out[0]["level3"] == ["因式分解方法"] and out[0]["level4"] == ["分组分解法"], (
+        f"FAIL: 3级路径匹配异常 {out}"
+    )
+    print("  ✓ 3 级路径补全 level4")
+
+    # LLM 把 level4 当 level3 输出 → 精确等于 level4 时解析回 level3
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["提公因式法与综合分解"], "level4": []}]
+    out = _normalize_knowledge(k)
+    assert out == [{"level1": "数与式", "level2": "因式分解", "level3": ["因式分解方法"], "level4": ["提公因式法与综合分解"]}], (
+        f"FAIL: level4当level3精确匹配异常 {out}"
+    )
+    print("  ✓ level4 当作 level3 输出（精确匹配）")
+
+    # level4 子串匹配
+    k = [{"level1": "数与式", "level2": "因式分解", "level3": ["提公因式法与综合分解因式"], "level4": []}]
+    out = _normalize_knowledge(k)
+    assert out and out[0]["level4"] == ["提公因式法与综合分解"], (
+        f"FAIL: level4子串匹配异常 {out}"
+    )
+    print("  ✓ level4 子串匹配")
+
+    # 完全无法匹配 → 丢弃
+    k = [{"level1": "不存在的分类", "level2": "xx", "level3": ["yy"], "level4": []}]
+    out = _normalize_knowledge(k)
+    assert out == [], f"FAIL: 不匹配项应被丢弃 {out}"
+    print("  ✓ 不匹配项丢弃")
+
+    print("\n  ✓ 知识标准化测试通过")
+
+
 # ==================== 主入口 ====================
 
 
@@ -350,6 +550,11 @@ def main():
         ("test_source_parsing", test_source_parsing),
         ("test_parse_options", test_parse_options),
         ("test_comprehensive_tag", test_comprehensive_tag),
+        ("test_sub_questions", test_sub_questions),
+        ("test_clean_stem", test_clean_stem),
+        ("test_fix_known_errors", test_fix_known_errors),
+        ("test_dedup_knowledge", test_dedup_knowledge),
+        ("test_normalize_knowledge", test_normalize_knowledge),
     ]
 
     for name, func in tests:

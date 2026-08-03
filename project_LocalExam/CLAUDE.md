@@ -12,22 +12,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 d:/claude/project_LocalExam/         # ← 当前仓库
-├── 解析版/                           # 解析版 DOCX（14份，含13份解析版+1份模拟卷）
+├── 解析版/                           # 解析版 DOCX
 ├── 规范/                             # 知识结构和 JSON 规范
-│   ├── 知识点层级结构.md              # 章节→知识点→子知识点树（第13-18章）
+│   ├── 知识点层级结构.md              # 4 级知识点树（299条，含综合题标签）
 │   └── 题库JSON字段定义.md            # 题库 JSON schema 完整定义
-├── skills-lock.json                  # Matt Pocock 技能锁文件
 ├── pipeline/                          # 题库构建 Pipeline
-│   ├── config.py                      # 配置（路径、API、知识点树）
+│   ├── config.py                      # 配置（路径、API、299条4级知识点树）
 │   ├── docx_parser.py                 # DOCX 解析、OMML→LaTeX、图片提取
 │   ├── llm_tagger.py                  # LLM 知识点标注（通义千问 API）
 │   ├── builder.py                     # 主流程编排 + JSON 组装
 │   ├── main.py                        # 入口
 │   └── test_pipeline.py               # 端到端测试
 ├── output/                            # 输出（git ignored）
-│   ├── exam_questions.json            # 总 JSON（332题，含知识点标注）
-│   └── images/                        # 按 question_id 命名的图片
-└── CLAUDE.md                         # 本文件
+│   ├── exam_questions.json            # 总 JSON（418题，含知识点标注）
+│   ├── images/                        # 按 question_id 命名的图片
+│   ├── index.html                     # 题库 HTML 浏览器（双击打开）
+│   └── label_tool.html                # 标注校对工具（双击打开）
+├── skills-lock.json                   # Matt Pocock 技能锁文件
+└── CLAUDE.md                          # 本文件
 ```
 
 ## 核心目标
@@ -45,24 +47,26 @@ d:/claude/project_LocalExam/         # ← 当前仓库
 
 每条题目是一个 JSON 对象，包含：
 - `question_id` — UUID v4
-- `source` — 来源信息（区/年/学期/考试类型/文件名/paper_id）
+- `source` — 来源信息（区/年/学期/考试类型/文件名）
 - `number` — 题号（数字）
 - `question_type` — `"选择题"` / `"填空题"` / `"解答题"`
-- `knowledge` — 知识点标注（level1/level2/level3，支持多条）
+- `knowledge` — 知识点标注（level1/level2/level3/level4，支持多条，4级可选）
 - `status` — `"success"` / `"failed"`
 - `content` — 题干（`stem`）+ 选项/子问（含 LaTeX 公式，用 `$...$` 包裹）
 
-### 知识点层级（详见 `规范/知识点层级结构.md`）
+### 知识点层级
 
-覆盖人教版八年级数学第 13-18 章：
-| 章 | 内容 |
-|---|------|
-| 第13章 | 三角形（概念、三边关系、重要线段、内角和外角） |
-| 第14章 | 全等三角形（判定SSS/SAS/ASA/AAS/HL、角平分线） |
-| 第15章 | 轴对称（图形、垂直平分线、等腰/等边三角形） |
-| 第16章 | 整式的乘法（幂运算、平方差/完全平方公式） |
-| 第17章 | 因式分解（提公因式、公式法） |
-| 第18章 | 分式（运算、分式方程） |
+4 级结构，**299 条**标签，覆盖 6 个一级分类 + 综合题标签：
+
+| 一级分类 | 标签数 |
+|:--------|:------:|
+| 数与式 | 78 |
+| 方程与不等式 | 32 |
+| 函数 | 34 |
+| 图形的性质 | 89 |
+| 图形的变化 | 30 |
+| 统计与概率 | 20 |
+| 综合题（标签） | 15 |
 
 ## DOCX 命名规则
 
@@ -98,24 +102,72 @@ python pipeline/main.py
 python pipeline/test_pipeline.py
 ```
 
+### 更新知识树
+
+`KNOWLEDGE_TREE` 硬编码在 `pipeline/config.py`（299 条 4 级标签）。改动知识树时，
+以 `规范/知识点层级结构.md` 为准**手工同步** config.py 中的列表
+（`规范/` 下 `new_tree_from_md.py` 等脚本为历史快照，不自动生效）。
+
+### 浏览题库 HTML
+
+直接双击 `output/index.html` 即可打开（数据已嵌入 HTML，无需 HTTP 服务器）。
+
+### 标注校对工具
+
+双击 `output/label_tool.html` 打开，可逐题校对知识点标签，修改后自动下载修正后的 JSON。
+
 ### API 配置
 
 编辑 `pipeline/config.py`：
 - `API_KEY` — 通义千问 API Key（设为空则跳过 LLM 标注）
 - `API_URL` — 默认 `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions`
-- `API_MODEL` — 默认 `qwen-vl-plus`
+- `API_MODEL` — 默认 `qwen-plus`
 
-### Pipeline 步骤
+### Pipeline 流程
 
-1. **正则切题** — 按题号 `\d+[．\.]` 切割，识别大题标题（一/二/三）
-2. **OMML→LaTeX** — DOCX 中的数学公式自动转换，`$...$` 包裹
-3. **图片提取** — 按 `question_id` 命名存入 `images/` 目录
-4. **LLM 知识点标注** — 通义千问 API 标注 level1/level2/level3
-5. **JSON 组装** — 输出 `output/exam_questions.json`
+```
+DOCX → 正则切题 → OMML→LaTeX → 图片提取
+                              ↓
+                     捕获解析文本（【解析】中的知识点说明）
+                              ↓
+                     分层 prompt（5步推理）
+                       第1步：选一级分类
+                       第2步：选二级分类
+                       第3步：选三级标签
+                       第4步：选四级标签（可选）
+                       第5步：判断是否需要综合标签
+                              ↓
+                     LLM 标注 → 输出 JSON
+                              ↓
+                     _normalize_knowledge（校验组合合法性）
+                              ↓
+                     _fix_known_errors（修正已知错误模式）
+                              ↓
+                     _add_comprehensive_tag（自动添加综合标签，两组关键字各命中至少一个）
+                              ↓
+                     _dedup_knowledge（跨章去重，保留综合标签+基础标签）
+                              ↓
+                     JSON 组装
+```
 
-### 当前输出（2026-07-22）
+### 核心模块说明
 
-- 14 份 DOCX → **332 题**
-- 题型：138 选择题 + 83 填空题 + 99 解答题 + 12 无类型（模拟卷）
-- 知识点标注覆盖率：100%（332/332）
-- JSON 大小：~380KB
+| 模块 | 功能 |
+|------|------|
+| `config.py` | 路径、API 配置、299 条 4 级知识点树（硬编码，与 `规范/知识点层级结构.md` 对应）|
+| `docx_parser.py` | `parse_docx()` 解析切割 + `omml_to_latex()` 公式转换 + `extract_images()` 图片提取 + `_capture_analysis()` 捕获解析文本 + `_capture_answer()` 捕获答案 |
+| `llm_tagger.py` | `tag_knowledge()` 分层 prompt 推理。含 `_normalize_knowledge()` 组合校验、`_fix_known_errors()` 后处理修正、`_add_comprehensive_tag()` 综合标签后处理（两组关键字各命中一个才加）、`_dedup_knowledge()` 跨章去重（保留综合标签） |
+| `builder.py` | `build_all()` 遍历所有 DOCX，`process_one_docx()` 处理单份，输出带顶层包装的 JSON |
+| `main.py` | 入口，调用 `build_all()` |
+| `test_pipeline.py` | 3 项测试：解析验证、图片提取、文件名解析 |
+
+### 当前输出（2026-07-29）
+
+- 18 份 DOCX → **418 题**
+- 覆盖七、八、九年级，含和平、南开、河东、河北、河西、红桥 6 区
+- 知识点标注覆盖率：**98%**（408/418）
+- 知识树：299 条 4 级标签（含 15 条综合题标签）
+- 综合标签已自动应用，有基础标签+综合标签双标
+- JSON 大小：~400KB
+- 浏览器：`output/index.html`（双击打开）+ KaTeX 渲染 + 按领域/题型筛选
+- 公式支持：分数、上下标、根式、**行列式（2×2矩阵）**、**①②③ 圈码**、**循环小数**
