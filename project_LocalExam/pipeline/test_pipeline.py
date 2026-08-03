@@ -15,8 +15,9 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pipeline.docx_parser import parse_docx, reconstruct_paragraph_text, _load_rels
-from pipeline.builder import parse_source_from_filename
+from pipeline.builder import _parse_options, parse_source_from_filename
 from pipeline.config import DOCX_DIR
+from pipeline.llm_tagger import _add_comprehensive_tag
 
 
 # ==================== 测试数据 ====================
@@ -233,6 +234,104 @@ def test_source_parsing():
     print(f"  ✓ source 解析全部正确")
 
 
+# ==================== 测试 4：选项解析 ====================
+
+
+def test_parse_options():
+    """验证选择题选项解析不被题干中的字母干扰（△ABC、点D、GDP 等）"""
+    print("\n" + "=" * 60)
+    print("测试 4：选项解析")
+    print("=" * 60)
+
+    # 内联中文选项（A．健B．康C．和D．平）
+    opts = _parse_options("A．健B．康C．和D．平")
+    assert [o["label"] for o in opts] == ["A", "B", "C", "D"], (
+        f"FAIL: 内联中文选项标签异常 {[o['label'] for o in opts]}"
+    )
+    assert [o["latex"] for o in opts] == ["健", "康", "和", "平"], (
+        f"FAIL: 内联中文选项内容异常 {[o['latex'] for o in opts]}"
+    )
+    print("  ✓ 内联中文选项 A．健B．康C．和D．平")
+
+    # 首个选项无点号（A 7B. 10C. 11D. 14）
+    opts = _parse_options("A 7B. 10C. 11D. 14")
+    assert [o["label"] for o in opts] == ["A", "B", "C", "D"]
+    assert [o["latex"] for o in opts] == ["7", "10", "11", "14"], (
+        f"FAIL: 无点号首选项解析异常 {[o['latex'] for o in opts]}"
+    )
+    print("  ✓ 首个选项无点号 A 7B. 10C. 11D. 14")
+
+    # 几何题干内嵌字母（回归：曾被切成 15 个碎片）
+    stem = "A．如图，在△ABC中，点D是AB的中点，若DE=3，则BC的长为（　）\tB．4\tC．5\tD．6"
+    opts = _parse_options(stem)
+    assert len(opts) == 4, (
+        f"FAIL: 几何题干选项被切成 {len(opts)} 个，应为 4 个"
+    )
+    assert [o["label"] for o in opts] == ["A", "B", "C", "D"]
+    assert "点D是AB的中点" in opts[0]["latex"], (
+        f"FAIL: 题干中的字母 D 被误当作选项边界"
+    )
+    assert [o["latex"] for o in opts[1:]] == ["4", "5", "6"], (
+        f"FAIL: 几何题干 B/C/D 选项内容异常 {[o['latex'] for o in opts[1:]]}"
+    )
+    print("  ✓ 几何题干内嵌字母不产生误切分")
+
+    # 选项内容含 GDP（字母 D 不能成为边界）
+    opts = _parse_options("A．$2013-2025$年，我国$GDP$整体呈上升趋势\tB．2022年，我国$GDP$数值约为$1200000$亿元")
+    assert len(opts) == 2 and opts[0]["label"] == "A" and opts[1]["label"] == "B"
+    assert "GDP" in opts[0]["latex"] and "$GDP$" in opts[1]["latex"], (
+        f"FAIL: 选项内容中的 GDP 被误切分"
+    )
+    print("  ✓ 选项内容中的 GDP 不被切分")
+
+    print("\n  ✓ 选项解析测试通过")
+
+
+# ==================== 测试 5：综合标签 ====================
+
+
+def test_comprehensive_tag():
+    """验证综合标签：函数+几何 → 函数与几何综合；两个函数 → 多函数综合"""
+    print("\n" + "=" * 60)
+    print("测试 5：综合标签后处理")
+    print("=" * 60)
+
+    def zt_level4(knowledge):
+        return [k["level4"][0] for k in knowledge if k.get("level1") == "综合题"]
+
+    # 一次函数 + 三角形 → 函数与几何综合（回归：曾被误标为多函数综合）
+    k = [
+        {"level1": "函数", "level2": "一次函数", "level3": ["一次函数的图象与性质"], "level4": []},
+        {"level1": "图形的性质", "level2": "三角形", "level3": ["三角形全等的判定"], "level4": []},
+    ]
+    tags = zt_level4(_add_comprehensive_tag(k))
+    assert "函数与几何综合" in tags, (
+        f"FAIL: 一次函数+三角形应标「函数与几何综合」，实际 {tags}"
+    )
+    assert "多函数综合" not in tags, (
+        f"FAIL: 一次函数+三角形被误标为「多函数综合」"
+    )
+    print("  ✓ 一次函数 + 三角形 → 函数与几何综合")
+
+    # 两个不同函数 → 多函数综合
+    k = [
+        {"level1": "函数", "level2": "一次函数", "level3": [], "level4": []},
+        {"level1": "函数", "level2": "二次函数", "level3": [], "level4": []},
+    ]
+    tags = zt_level4(_add_comprehensive_tag(k))
+    assert "多函数综合" in tags, (
+        f"FAIL: 一次函数+二次函数应标「多函数综合」，实际 {tags}"
+    )
+    print("  ✓ 一次函数 + 二次函数 → 多函数综合")
+
+    # 单项知识点不加综合标签
+    k = [{"level1": "函数", "level2": "一次函数", "level3": [], "level4": []}]
+    assert _add_comprehensive_tag(k) == k, "FAIL: 单知识点不应加综合标签"
+    print("  ✓ 单知识点不加综合标签")
+
+    print("\n  ✓ 综合标签测试通过")
+
+
 # ==================== 主入口 ====================
 
 
@@ -249,6 +348,8 @@ def main():
         ("test_parsing", test_parsing),
         ("test_image_extraction", test_image_extraction),
         ("test_source_parsing", test_source_parsing),
+        ("test_parse_options", test_parse_options),
+        ("test_comprehensive_tag", test_comprehensive_tag),
     ]
 
     for name, func in tests:

@@ -82,25 +82,37 @@ def parse_source_from_filename(filename):
 
 # ==================== 选项解析 ====================
 
+# 选项标签边界：A-D 后必须跟 ．/./空白（否则题干中的字母如 △ABC、点D、GDP
+# 会被误当作选项边界，把选项切成碎片）
+_OPTION_SEP = re.compile(r"[A-D]\s*(?:[．.]|\s)")
+
 
 def _parse_options(stem_text):
-    """从题干文本中解析选项 A/B/C/D
-
-    DOCX 中选项可能同在一行（A. xxx\tB. xxx\tC. xxx\tD. xxx）
-    也可能是多行，两种情况都处理
-    """
+    """从题干文本中解析选项 A/B/C/D"""
     options = []
+    # 找出可能的选项行：包含连续的 A-D 的行
+    for line in stem_text.split("\n"):
+        line = line.strip()
+        if not _OPTION_SEP.search(line):
+            continue
 
-    # 用正则全局搜索 A-D 开头 + .或． 的片段
-    # 使用 re.DOTALL 使 . 匹配换行，以便跨行匹配选项内容
-    for m in re.finditer(
-        r"([A-D])\s*[．\.]\s*(.*?)(?=[A-D]\s*[．\.]|$)",
-        stem_text,
-        re.DOTALL,
-    ):
-        label = m.group(1)
-        latex = m.group(2).strip()
-        options.append({"label": label, "latex": latex})
+        # 从行中提取所有 A-D 开头的片段
+        # 先找到第一个 A-D
+        while line:
+            m = re.match(r"([A-D])\s*(?:[．.]|\s)(.*)", line)
+            if not m:
+                break
+            label = m.group(1)
+            rest = m.group(2)
+            # 找到下一个 A-D 的位置
+            next_m = _OPTION_SEP.search(rest)
+            if next_m:
+                content = rest[:next_m.start()].strip()
+                line = rest[next_m.start():]
+            else:
+                content = rest.strip()
+                line = ""
+            options.append({"label": label, "latex": content})
 
     return options if options else None
 
@@ -108,27 +120,42 @@ def _parse_options(stem_text):
 def _parse_sub_questions(paras):
     """从解答题段落中解析子问
 
-    匹配 （1） 或 (1) 开头的段落
+    匹配 （1）、(1)、①、②、③ 开头的段落
     """
     sub_questions = []
+    circle_map = {'①': '1', '②': '2', '③': '3'}
     for para in paras:
-        m = re.match(r"^[（(](\d+)[）)]\s*(.*)", para.strip())
+        text = para.strip()
+        m = re.match(r"^[（(](\d+)[）)]\s*(.*)", text)
         if m:
             content = m.group(2).strip()
             sub_questions.append({
                 "number": f"({m.group(1)})",
                 "latex": content,
             })
+            continue
+        # 也匹配圆圈数字 ①②③
+        m = re.match(r"^([①②③])\s*(.*)", text)
+        if m:
+            content = m.group(2).strip()
+            sub_questions.append({
+                "number": m.group(1),
+                "latex": content,
+            })
     return sub_questions if sub_questions else None
 
 
-def _clean_stem(full_text):
-    """去掉文本中的选项行，只保留题干
+def _clean_stem(full_text, question_type=None):
+    """去掉文本中的选项行和子问行，只保留题干
 
-    识别以 "A．" / "A." / "B．" / "B." 等开头的行并移除
+    识别以 "A．" / "A." / "A"（后跟空格/tab）等开头的行并移除
+    如果是解答题，也移除子问行（（1）/ (1) / ① 等）
     """
     lines = full_text.split("\n")
-    cleaned = [l for l in lines if not re.match(r"^[A-D]\s*[．\.]", l.strip())]
+    cleaned = [l for l in lines if not re.match(r"^[A-D][．\.]?", l.strip())]
+    # 解答题：去掉子问行，避免和 sub_questions 重复
+    if question_type == "解答题":
+        cleaned = [l for l in cleaned if not re.match(r"^[\(（①②③]\d?[\)）]?\s*", l.strip())]
     return "\n".join(cleaned).strip()
 
 
@@ -160,7 +187,7 @@ def process_one_docx(filepath, api_key=API_KEY):
 
         # 构建 stem：所有段落的含公式文本，去掉选项行
         full_text = "\n".join(rq["paras_with_math"])
-        stem = _clean_stem(full_text)
+        stem = _clean_stem(full_text, rq["question_type"])
 
         content = {
             "images": images,
